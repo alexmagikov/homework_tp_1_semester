@@ -5,8 +5,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct Note {
+    char* name;
+    char* phone;
+} Note;
+
 typedef struct Base {
-    char** array;
+    Note* notes;
     int indexOfLastElement;
 } Base;
 
@@ -16,167 +21,210 @@ void returnErrorOfMemory(char* array) {
     exit(0);
 }
 
-Base createBase() {
-    FILE* file = fopen("base.txt", "r+");
-    char buffer[31];
-    int index = 0;
-    char** array = NULL;
-    while (fgets(buffer, sizeof(buffer), file) != NULL) {
-        array = (char*)realloc(array, (index + 1) * sizeof(char*));
-        if (array == NULL) {
-            fclose(file);
-            returnErrorOfMemory(array);
-        }
-        array[index] = malloc(32);
-        if (array[index] == NULL) {
-            fclose(file);
-            returnErrorOfMemory(array[index]);
-        }
-        strcpy(array[index], buffer);
-        index++;
+Base createBase(char* fileName) {
+    FILE* file = fopen(fileName, "r+");
+    if (file == NULL) {
+        Base base;
+        base.indexOfLastElement = 0;
+        return base;
     }
-    int indexOfLastElementInFile = index;
+    char buffer[31];
+    int indexOfNote = 0;
+    Note* arrayOfNotes = NULL;
+    while (fgets(buffer, sizeof(buffer), file) != NULL) {
+        arrayOfNotes = (Note*)realloc(arrayOfNotes, (indexOfNote + 1) * sizeof(Note));
+        if (arrayOfNotes == NULL) {
+            fclose(file);
+            returnErrorOfMemory(arrayOfNotes);
+        }
+        arrayOfNotes[indexOfNote].name = malloc(20);
+        arrayOfNotes[indexOfNote].phone = malloc(12);
+        if (arrayOfNotes[indexOfNote].name == NULL) {
+            fclose(file);
+            returnErrorOfMemory(arrayOfNotes[indexOfNote].name);
+        }
+        if (arrayOfNotes[indexOfNote].phone == NULL) {
+            fclose(file);
+            returnErrorOfMemory(arrayOfNotes[indexOfNote].phone);
+        }
+
+        char name[20];
+        char phone[12];
+        int indexBuffer = 0;
+        while (buffer[indexBuffer] != ' ') {
+            name[indexBuffer] = buffer[indexBuffer];
+            indexBuffer++;
+        }
+        name[indexBuffer] = '\0';
+        indexBuffer++;
+        int indexName = indexBuffer;
+        while (buffer[indexBuffer] != '\n' && buffer[indexBuffer] != '\0') {
+            phone[indexBuffer - indexName] = buffer[indexBuffer];
+            indexBuffer++;
+        }
+        phone[indexBuffer - indexName] = '\0';
+        strcpy(arrayOfNotes[indexOfNote].name, name);
+        strcpy(arrayOfNotes[indexOfNote].phone, phone);
+        indexOfNote++;
+
+    }
     fclose(file);
     Base result;
-    result.array = array;
-    result.indexOfLastElement = indexOfLastElementInFile;
+    result.notes = arrayOfNotes;
+    result.indexOfLastElement = indexOfNote;
     return result;
 }
 
-void entryToBase(Base* base, int* index) {
-    char* name[20];
-    char* number[11];
-    printf("input name and number ");
-    scanf("%20s", name);
-    scanf("%11s", number);
-    char* note[32];
-    
-    if (*index == 0) {
-        strcpy(note, "");
-        strcat(note, name);
-        strcat(note, " ");
-        strcat(note, number);
-    }
-    else {
-        strcpy(note, "\n");
-        strcat(note, name);
-        strcat(note, " ");
-        strcat(note, number);
-    }
-    (*base).array = (char*)realloc((*base).array, (*index + 1) * sizeof(char*));
-    if ((*base).array == NULL) {
-        returnErrorOfMemory((*base).array);
-    }
-    (*base).array[*index] = malloc(32);
-    if ((*base).array[*index] == NULL) {
-        returnErrorOfMemory((*base).array[*index]);
-    }
-    strcpy((*base).array[*index], note);
-    (*index)++;
+bool testForCreateBaseForNormalValue() {
+    Base base = createBase("baseForTestForNormalValue.txt");
+    return base.indexOfLastElement == 1 && (!strcmp(base.notes[0].name, "mark")) && (!strcmp(base.notes[0].phone, "123"));
 }
 
-void returnNumberByName(Base base) {
+bool testForCreateBaseForBorderValue() {
+    Base base = createBase("thisFileDoesNotExist.txt");
+    return base.indexOfLastElement == 0;
+}
+
+void entryToBase(Base* base, int* indexOfNote) {
+    char* name[20];
+    char* phone[12];
+    printf("input name ");
+    scanf("%20s", name);
+    printf("input phone ");
+    scanf("%11s", phone);
+    if (*indexOfNote + 1 > 100) {
+        printf("base if full");
+        exit(0);
+    }
+    (*base).notes = (Note*)realloc((*base).notes, (*indexOfNote + 1) * sizeof(Note));
+    if ((*base).notes == NULL) {
+        returnErrorOfMemory((*base).notes);
+    }
+    (*base).notes[*indexOfNote].name = malloc(21);
+    (*base).notes[*indexOfNote].phone = malloc(12);
+    if ((*base).notes[*indexOfNote].name == NULL) {
+        returnErrorOfMemory((*base).notes[*indexOfNote].name);
+    }
+    if ((*base).notes[*indexOfNote].phone == NULL) {
+        returnErrorOfMemory((*base).notes[*indexOfNote].phone);
+    }
+    strcpy((*base).notes[*indexOfNote].name, name);
+    strcpy((*base).notes[*indexOfNote].phone, phone);
+    (*indexOfNote)++;
+}
+
+
+
+void returnNumberByName(Base base, int index) {
     bool isFind = false;
     char name[20];
     printf("input name ");
     scanf("%s", name);
-    for (int i = 0; i < base.indexOfLastElement; i++) {
-        char nameNote[20];
-        int indexName = 0;
-        while (base.array[i][indexName] != ' ') {
-            nameNote[indexName] = base.array[i][indexName];
-            indexName++;
-        }
-        nameNote[indexName] = '\0';
-        if (!strcmp(name, nameNote)) {
-            indexName++;
-            printf("number: ");
-            while (base.array[i][indexName] != '\n' && base.array[i][indexName] != '\0' && base.array[i][indexName] != ' ') {
-                printf("%c", base.array[i][indexName]);
-                indexName++;
-            }
+    for (int i = 0; i < index; i++) {
+        if (!strcmp(name, base.notes[i].name)) {
+            printf("number: %s\n", base.notes[i].phone);
             isFind = true;
             break;
         }
 
     }
     if (!isFind) {
-        printf("number didnt find");
+        printf("number didnt find\n");
     }
-    printf("\n");
 }
 
-void returnNameByNumber(Base base) {
+char* returnNumberByNameForTests(Base base, int index, char name[20]) {
+    bool isFind = false;
+    for (int i = 0; i < index; i++) {
+        if (!strcmp(name, base.notes[i].name)) {
+            return base.notes[i].phone;
+            isFind = true;
+            break;
+        }
+
+    }
+    if (!isFind) {
+        printf("number didnt find\n");
+    }
+}
+
+bool testForReturnNumberByName() {
+    Base base = createBase("baseForTestForNormalValue.txt");
+    return !strcmp(returnNumberByNameForTests(base, 1, "mark"), "123");
+}
+
+void returnNameByNumber(Base base, int index) {
     char number[12];
     printf("input number ");
     scanf("%s", number);
     bool isFind = false;
-    for (int i = 0; i < base.indexOfLastElement; i++) {
-        char numberNote[12];
-        char nameNote[20];
-        int indexNote = 0;
-        int indexName = 0;
-        while (base.array[i][indexNote] != ' ') {
-            nameNote[indexNote] = base.array[i][indexNote];
-            indexNote++;
-        }
-        nameNote[indexNote] = '\0';
-        indexNote++;
-        indexName = indexNote;
-        while (base.array[i][indexNote] != '\n' && base.array[i][indexNote] != '\0' && base.array[i][indexNote] != ' ') {
-            numberNote[indexNote - indexName] = base.array[i][indexNote];
-            indexNote++;
-        }
-        numberNote[indexNote - indexName] = '\0';
-        if (!strcmp(number, numberNote)) {
-            printf("name: %s", nameNote);
+    for (int i = 0; i < index; i++) {
+        if (!strcmp(number, base.notes[i].phone)) {
+            printf("name: %s\n", base.notes[i].name);
             isFind = true;
             break;
         }
     }
     if (!isFind) {
-        printf("number didnt find");
+        printf("number didnt find\n");
     }
-    printf("\n");
 }
 
-void printToFile(Base base, int index) {
+char* returnNameByNumberForTests(Base base, int index, char number[12]) {
+    bool isFind = false;
+    for (int i = 0; i < index; i++) {
+        if (!strcmp(number, base.notes[i].phone)) {
+            return base.notes[i].name;
+            isFind = true;
+            break;
+        }
+    }
+    if (!isFind) {
+        printf("number didnt find\n");
+    }
+}
+
+bool testForReturnNameByNumber() {
+    Base base = createBase("baseForTestForNormalValue.txt");
+    return !strcmp(returnNameByNumberForTests(base, 1, "123"), "mark");
+}
+
+void printToFile(Base* base, int index) {
     FILE* file = fopen("base.txt", "a");
-    for (int i = 0; i < (index - base.indexOfLastElement); i++) {
-        if (base.indexOfLastElement + i > 100) {
+    for (int i = 0; i < (index - (*base).indexOfLastElement); i++) {
+        if ((*base).indexOfLastElement + i > 100) {
             printf("base is full");
             break;
         }
         else {
-            fprintf(file, base.array[base.indexOfLastElement + i]);
+            if  ((*base).indexOfLastElement == 0 && i == 0) {
+                fprintf(file, "\n");
+            }
+            fprintf(file, (*base).notes[(*base).indexOfLastElement + i].name);
+            fprintf(file, " ");
+            fprintf(file, (*base).notes[(*base).indexOfLastElement + i].phone);
+            fprintf(file, "\n");
         }
     }
+    (*base).indexOfLastElement = index;
     fclose(file);
 }
 
 void printfBase(Base base, int index) {
     for (int i = 0; i < index; i++) {
-        printf("%s", base.array[i]);
+        printf("%s %s\n", base.notes[i].name, base.notes[i].phone);
     }
-    printf("\n");
 }
-
-bool testForEntryToBase() {
-    Base base;
-    base.array = NULL;
-    int index = 0;
-    entryToBase(&base, &index);
-    return base.array[0] != NULL;
-}
-
 
 void main(void) {
-    if (!testForEntryToBase()){
+    if (!testForReturnNameByNumber() || !testForCreateBaseForNormalValue() || !testForCreateBaseForBorderValue() || !testForReturnNumberByName()) {
         printf("tests are not accepted");
         exit(0);
     }
-    Base base = createBase();
-    int index = base.indexOfLastElement;
+
+    Base base = createBase("base.txt");
+    int index = base.indexOfLastElement;;
+    
     while (true) {
         int currentDo = 0;
         printf("input command ");
@@ -184,9 +232,10 @@ void main(void) {
 
         if (currentDo == 0) {
             for (int i = 0; i < index; i++) {
-                free(base.array[i]);
+                free(base.notes[i].name);
+                free(base.notes[i].phone);
             }
-            free(base.array);
+            free(base.notes);
             exit(0);
         }
         else if (currentDo == 1) {
@@ -196,13 +245,13 @@ void main(void) {
             printfBase(base, index);
         }
         else if (currentDo == 3) {
-            returnNumberByName(base);
+            returnNumberByName(base, index);
         }
         else if (currentDo == 4) {
-            returnNameByNumber(base);
+            returnNameByNumber(base, index);
         }
         else if (currentDo == 5) {
-            printToFile(base, index);
+            printToFile(&base, index);
         }
     }
 }
