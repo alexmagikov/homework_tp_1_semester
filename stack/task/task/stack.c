@@ -38,6 +38,10 @@ int peek(Stack* stack) {
 	return stack->head->value;
 }
 
+bool isEmpty(Stack* stack) {
+	return stack->head == NULL;
+}
+
 Stack* createStack() {
 	return (Stack*)calloc(1, sizeof(Stack));
 }

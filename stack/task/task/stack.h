@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 typedef struct Stack Stack;
 
 void push(Stack* stack, int value);
@@ -7,5 +9,7 @@ void push(Stack* stack, int value);
 void pop(Stack* stack);
 
 int peek(Stack* stack);
+
+bool isEmpty(Stack* stack);
 
 Stack* createStack();
