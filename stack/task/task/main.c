@@ -4,17 +4,25 @@
 
 bool testForCreateStack() {
 	Stack* stack = createStack();
-	return stack->head == NULL;
+	return stack != NULL;
 }
 
-bool testForPush() {
+bool testForPeek() {
 	Stack* stack = createStack();
 	push(stack, 1);
 	return peek(stack) == 1;
 }
 
+bool testForPop() {
+	Stack* stack = createStack();
+	push(stack, 1);
+	push(stack, 2);
+	pop(stack);
+	return peek(stack) == 1;
+}
+
 void main(void) {
-	if (!testForPush || !testForCreateStack()) {
+	if (!testForPeek || !testForCreateStack() || !testForPop()) {
 		printf("tests are failed");
 		exit(0);
 	}
