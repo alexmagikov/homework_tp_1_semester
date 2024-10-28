@@ -113,7 +113,35 @@ void entryToBase(Base* base, int* indexOfNote) {
     (*indexOfNote)++;
 }
 
+void entryToBaseForTests(Base* base, int* indexOfNote, char* name, char* phone) {
+    if (*indexOfNote + 1 > 100) {
+        printf("base if full");
+        exit(0);
+    }
+    (*base).notes = (Note*)realloc((*base).notes, (*indexOfNote + 1) * sizeof(Note));
+    if ((*base).notes == NULL) {
+        returnErrorOfMemory((*base).notes);
+    }
+    (*base).notes[*indexOfNote].name = malloc(21);
+    (*base).notes[*indexOfNote].phone = malloc(12);
+    if ((*base).notes[*indexOfNote].name == NULL) {
+        returnErrorOfMemory((*base).notes[*indexOfNote].name);
+    }
+    if ((*base).notes[*indexOfNote].phone == NULL) {
+        returnErrorOfMemory((*base).notes[*indexOfNote].phone);
+    }
+    strcpy((*base).notes[*indexOfNote].name, name);
+    strcpy((*base).notes[*indexOfNote].phone, phone);
+    (*indexOfNote)++;
+}
 
+bool testForEntryToBaseForNormalValue() {
+    Base base;
+    base.notes = NULL;
+    int index = 0;
+    entryToBaseForTests(&base, &index, "mark", "123");
+    return !strcmp(base.notes[0].name, "mark") && !strcmp(base.notes[0].phone, "123");
+}
 
 void returnNumberByName(Base base, int index) {
     bool isFind = false;
@@ -197,7 +225,7 @@ void printToFile(Base* base, int index) {
             break;
         }
         else {
-            if  ((*base).indexOfLastElement == 0 && i == 0) {
+            if  ((*base).indexOfLastElement > 0 && i > 0) {
                 fprintf(file, "\n");
             }
             fprintf(file, (*base).notes[(*base).indexOfLastElement + i].name);
@@ -217,7 +245,7 @@ void printfBase(Base base, int index) {
 }
 
 void main(void) {
-    if (!testForReturnNameByNumber() || !testForCreateBaseForNormalValue() || !testForCreateBaseForBorderValue() || !testForReturnNumberByName()) {
+    if (!testForEntryToBaseForNormalValue() || !testForReturnNameByNumber() || !testForCreateBaseForNormalValue() || !testForCreateBaseForBorderValue() || !testForReturnNumberByName()) {
         printf("tests are not accepted");
         exit(0);
     }
