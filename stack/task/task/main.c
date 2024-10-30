@@ -32,6 +32,14 @@ bool testForIsEmpty() {
 	return isEmpty(stack);
 }
 
+bool testForClearStack() {
+	Stack* stack = createStack();
+	push(stack, 1);
+	push(stack, 2);
+	clearStack(stack);
+	return isEmpty(stack);
+}
+
 char* sortingStation(char* string) {
 	char* result = NULL;
 	int lenOfReslut = 0;
@@ -39,16 +47,20 @@ char* sortingStation(char* string) {
 	for (int i = 0; i < strlen(string); i++) {
 		if (isdigit(string[i])) {
 			result = (char*)realloc(result, (lenOfReslut + 1) * sizeof(char));
-			result[i] = string[i];
-			printf("%c", result[i]);
+			if (result == NULL) {
+				return NULL;
+			}
+			result[lenOfReslut] = string[i];
 			lenOfReslut++;
 		}
 		else if (string[i] == '-' || string[i] == '+') {
 			if (!isEmpty(stack)) {
 				while (peek(stack) == '*' || peek(stack) == '/' || peek(stack) == '+' || peek(stack) == '-') {
 					result = (char*)realloc(result, (lenOfReslut + 1) * sizeof(char));
-					result[i] = peek(stack);
-					printf("%c", result[i]);
+					if (result == NULL) {
+						return NULL;
+					}
+					result[lenOfReslut] = peek(stack);
 					lenOfReslut++;
 					pop(stack);
 				}
@@ -59,8 +71,10 @@ char* sortingStation(char* string) {
 			if (!isEmpty(stack)) {
 				while (peek(stack) == '*' || peek(stack) == '/') {
 					result = (char*)realloc(result, (lenOfReslut + 1) * sizeof(char));
-					result[i] = peek(stack);
-					printf("%c", result[i]);
+					if (result == NULL) {
+						return NULL;
+					}
+					result[lenOfReslut] = peek(stack);
 					lenOfReslut++;
 					pop(stack);
 				}
@@ -76,8 +90,10 @@ char* sortingStation(char* string) {
 					return "didn find open bracket";
 				}
 				result = (char*)realloc(result, (lenOfReslut + 1) * sizeof(char));
-				result[i] = peek(stack);
-				printf("%c", result[i]);
+				if (result == NULL) {
+					return NULL;
+				}
+				result[lenOfReslut] = peek(stack);
 				lenOfReslut++;
 				pop(stack);
 			}
@@ -89,8 +105,10 @@ char* sortingStation(char* string) {
 			return "didn find close bracket";
 		}
 		result = (char*)realloc(result, (lenOfReslut + 1) * sizeof(char));
+		if (result == NULL) {
+			return NULL;
+		}
 		result[lenOfReslut] = peek(stack);
-		printf("%c", result[lenOfReslut]);
 		pop(stack);
 		lenOfReslut++;
 	}
@@ -98,8 +116,24 @@ char* sortingStation(char* string) {
 	return result;
 }
 
+bool testForSortingStationForNormalValue1() {
+	return !strcmp(sortingStation("(1+1)*2"), "11+2*");
+}
+
+bool testForSortingStationForNormalValue2() {
+	return !strcmp(sortingStation("2+3*3"), "233*+");
+}
+
+bool testForSortingStationForNormalValue3() {
+	return !strcmp(sortingStation("(1+2)*3-(4/2)"), "12+3*42/-");
+}
+
+bool testForSortingStationForNegativeValue() {
+	return !strcmp(sortingStation("("), "didn find close bracket");
+}
+
 void main(void) {
-	if (!testForIsEmpty() || !testForPeek || !testForCreateStack() || !testForPop()) {
+	if (!testForSortingStationForNegativeValue() || !testForSortingStationForNormalValue3() || !testForSortingStationForNormalValue2() || !testForSortingStationForNormalValue1() || !testForClearStack() ||  !testForIsEmpty() || !testForPeek || !testForCreateStack() || !testForPop()) {
 		printf("tests are failed");
 		exit(0);
 	}

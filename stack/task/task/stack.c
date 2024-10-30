@@ -45,3 +45,9 @@ bool isEmpty(Stack* stack) {
 Stack* createStack() {
 	return (Stack*)calloc(1, sizeof(Stack));
 }
+
+void clearStack(Stack* stack) {
+	while (!isEmpty(stack)) {
+		pop(stack);
+	}
+}

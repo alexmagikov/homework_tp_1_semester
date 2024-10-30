@@ -13,3 +13,5 @@ int peek(Stack* stack);
 bool isEmpty(Stack* stack);
 
 Stack* createStack();
+
+void clearStack(Stack* stack);
