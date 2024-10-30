@@ -26,8 +26,16 @@ bool testForIsEmpty() {
 	return isEmpty(stack);
 }
 
+bool testForClearStack() {
+	Stack* stack = createStack();
+	push(stack, 1);
+	push(stack, 2);
+	clearStack(stack);
+	return isEmpty(stack);
+}
+
 void main(void) {
-	if (!testForIsEmpty() || !testForPeek || !testForCreateStack() || !testForPop()) {
+	if (!testForClearStack() ||  !testForIsEmpty() || !testForPeek || !testForCreateStack() || !testForPop()) {
 		printf("tests are failed");
 		exit(0);
 	}
