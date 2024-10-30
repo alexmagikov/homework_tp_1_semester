@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 typedef struct StackElement {
-	int value;
+	char value;
 	struct StackElement* next;
 } StackElement;
 
@@ -12,7 +12,7 @@ typedef struct Stack {
 	StackElement* head;
 } Stack;
 
-void push(Stack* stack, int value) {
+void push(Stack* stack, char value) {
 	if (stack == NULL) {
 		printf("not initialized");
 	}
