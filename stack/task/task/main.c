@@ -28,6 +28,7 @@ bool testForIsEmpty() {
 	return isEmpty(stack);
 }
 
+
 bool isBalanced(char* string) {
 	Stack* stack = createStack();
 	for (int i = 0; i < strlen(string); i++) {
@@ -36,6 +37,8 @@ bool isBalanced(char* string) {
 		}
 		else if (string[i] == '}') {
 			if (peek(stack) != '{' || isEmpty(stack)) {
+				clearStack(stack);
+				free(stack);
 				return false;
 			}
 			else {
@@ -44,6 +47,8 @@ bool isBalanced(char* string) {
 		}
 		else if (string[i] == ')') {
 			if (peek(stack) != '(' || isEmpty(stack)) {
+				clearStack(stack);
+				free(stack);
 				return false;
 			}
 			else {
@@ -52,6 +57,8 @@ bool isBalanced(char* string) {
 		}
 		else if (string[i] == ']') {
 			if (peek(stack) != '[' || isEmpty(stack)) {
+				clearStack(stack);
+				free(stack);
 				return false;
 			}
 			else {
@@ -60,6 +67,7 @@ bool isBalanced(char* string) {
 		}
 	}
 	bool result = isEmpty(stack);
+	clearStack(stack);
 	free(stack);
 	return result;
 }
@@ -80,8 +88,16 @@ bool testForIsBalancedForFalseBorderValue2() {
 	return !isBalanced(")");
 }
 
+bool testForClearStack() {
+	Stack* stack = createStack();
+	push(stack, 1);
+	push(stack, 2);
+	clearStack(stack);
+	return isEmpty(stack);
+}
+
 void main(void) {
-	if (!testForIsBalancedForFalseBorderValue2() || !testForIsBalancedForFalseBorderValue1() || !testForIsBalancedForTrueValue() || !testForIsBalancedForFalseValue() || !testForIsEmpty() || !testForPeek || !testForCreateStack() || !testForPop()) {
+	if (!testForClearStack() || !testForIsBalancedForFalseBorderValue2() || !testForIsBalancedForFalseBorderValue1() || !testForIsBalancedForTrueValue() || !testForIsBalancedForFalseValue() || !testForIsEmpty() || !testForPeek || !testForCreateStack() || !testForPop()) {
 		printf("tests are failed");
 		exit(0);
 	}
