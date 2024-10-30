@@ -51,6 +51,8 @@ int calculateInPostfix(const char* string) {
 				else if (string[i] == '/') {
 					if (tmp == 0) {
 						printf("u cant divide by 0 ");
+						clearStack(stack);
+						free(stack);
 						exit(0);
 						return -1;
 					}
@@ -69,6 +71,7 @@ int calculateInPostfix(const char* string) {
 	}
 	else {
 		int result = peek(stack);
+		clearStack(stack);
 		free(stack);
 		return result;
 	}
@@ -86,8 +89,16 @@ bool testForPostfixCalculatorForNULLValue() {
 	return calculateInPostfix(" ") == -1;
 }
 
+bool testForClearStack() {
+	Stack* stack = createStack();
+	push(stack, 1);
+	push(stack, 2);
+	clearStack(stack);
+	return isEmpty(stack);
+}
+
 void main(void) {
-	if (!testForPostfixCalculatorForNULLValue() || !testForPostfixCalculatorForBorderValue() || !testForPostfixCalculatorForNormalValue() || !testForIsEmpty() || !testForPeek || !testForCreateStack() || !testForPop()) {
+	if (!testForClearStack() || !testForPostfixCalculatorForNULLValue() || !testForPostfixCalculatorForBorderValue() || !testForPostfixCalculatorForNormalValue() || !testForIsEmpty() || !testForPeek || !testForCreateStack() || !testForPop()) {
 		printf("tests are failed");
 		exit(0);
 	}
