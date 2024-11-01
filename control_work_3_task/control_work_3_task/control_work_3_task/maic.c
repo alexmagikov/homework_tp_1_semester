@@ -8,15 +8,15 @@ void printWithoutEqual() {
     FILE* file;
     file = fopen("file.txt", "r");
     if (file == NULL) {
-        perror("Ошибка открытия файла");
+        printf("Ошибка открытия файла");
         return 1;
     }
     char ch;
-    char last = "";
+    char lastChar = "";
     while ((ch = fgetc(file)) != EOF) {
-        if (ch != last) {
+        if (ch != lastChar) {
             printf("%c", ch);
-            last = ch;
+            lastChar = ch;
         }
     }
     fclose(file);
@@ -27,16 +27,16 @@ char* printWithoutEqualForTest(char* fileName) {
     char ch;
     file = fopen(fileName, "r");
     if (file == NULL) {
-        perror("Ошибка открытия файла");
+        printf("Ошибка открытия файла");
         return 1;
     }
     char result[100];
-    char last = "";
+    char lastChar = "";
     int index = 0;
     while ((ch = fgetc(file)) != EOF) {
-        if (ch != last) {
+        if (ch != lastChar) {
             result[index] = ch;
-            last = ch;
+            lastChar = ch;
             index++;
         }
     }
