@@ -5,7 +5,7 @@
 
 
 int main(void) {
-	if (!testForSetValue() || testForRemoveForNullValue() || !testForCreateList() || !testForAdd() || !testForGetValueForNormalValue() || !testForGetValueForNullValue() || !testForRemoveForNormalValue()) {
+	if (!testForSetValue() || !testForCreateList() || !testForAdd() || !testForGetValueForNormalValue() || !testForGetValueForNullValue() || !testForRemoveForNormalValue()) {
 		printf("tests are not completed");
 		return -1;
 	}
