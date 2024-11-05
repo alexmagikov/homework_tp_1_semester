@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
+#include <stdio.h>
 
 typedef struct ListElement {
 	Value value;
@@ -49,16 +50,23 @@ bool isValid(List* list, Position position) {
 	return position != NULL;
 }
 
-bool removeFromList(List* list, Position position) {
+void removeFromList(List* list, Position position) {
 	if (position->next == NULL) {
-		return false;
+		printf("pointer to NULL");
+		exit(0);
 	}
 	List* tmp = position->next->next;
 	free(position->next);
 	position->next = tmp;
-	return true;
 }
 
 Position next(Position position) {
 	return position->next;
+}
+
+void freeListElements(List* list) {
+	Position position = first(list);
+	while (!isLast(list, position)) {  
+		removeFromList(list, position);
+	}
 }

@@ -22,8 +22,10 @@ Value getValue(List* list, Position position);
 
 void setValue(List* list, Position position, Value value);
 
-bool removeFromList(List* list, Position position);
+void removeFromList(List* list, Position position);
 
 bool isLast(List* list, Position position);
 
 bool isValid(List* list, Position position);
+
+void freeListElements(List* list);

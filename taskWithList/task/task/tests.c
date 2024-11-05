@@ -31,13 +31,8 @@ bool testForRemoveForNormalValue(void) {
 	List* list = createList();
 	Position position = first(list);
 	add(list, position, 1);
-	return removeFromList(list, position);
-}
-
-bool testForRemoveForNullValue(void) {
-	List* list = createList();
-	Position position = first(list);
-	return removeFromList(list, position);
+	removeFromList(list, position);
+	return isLast(list, position);
 }
 
 bool testForSetValue(void) {
@@ -49,3 +44,4 @@ bool testForSetValue(void) {
 	setValue(list, position, 3);
 	return getValue(list, position) == 3;
 }
+
