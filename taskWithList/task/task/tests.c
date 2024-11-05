@@ -44,10 +44,4 @@ bool testForSetValue(void) {
 	setValue(list, position, 3);
 	return getValue(list, position) == 3;
 }
-/*
-bool testForFreeList(void) {
-	List* list = createList();
-	Position position = first(list);
-	add(list, position, 1);
-	freeList(list);
-}*/
+

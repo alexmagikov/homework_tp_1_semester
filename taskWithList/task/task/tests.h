@@ -13,4 +13,4 @@ bool testForRemoveForNormalValue(void);
 
 bool testForSetValue(void);
 
-//bool testForFreeList(void);
+bool testForFreeList(void);

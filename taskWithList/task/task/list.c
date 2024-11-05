@@ -58,22 +58,15 @@ void removeFromList(List* list, Position position) {
 	List* tmp = position->next->next;
 	free(position->next);
 	position->next = tmp;
-	return true;
 }
 
 Position next(Position position) {
 	return position->next;
 }
-/*
-void freeList(List* list) {
+
+void freeListElements(List* list) {
 	Position position = first(list);
-	Position temp;
-	while (!isLast(list, position)) {
-		printf("2	");
-		temp = position->next;  
+	while (!isLast(list, position)) {  
 		removeFromList(list, position);
-		position = temp;
 	}
-	free(list);
 }
-*/

@@ -28,4 +28,4 @@ bool isLast(List* list, Position position);
 
 bool isValid(List* list, Position position);
 
-//void freeList(List* list);
+void freeListElements(List* list);
