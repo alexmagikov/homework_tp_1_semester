@@ -13,4 +13,14 @@ bool testForRemoveForNormalValue(void);
 
 bool testForSetValue(void);
 
-bool testForFreeList(void);
+bool testForAddToSortingListForSingleValue(void);
+
+bool testForAddToSortingListForNormalValue(void);
+
+bool testForAddToSortingListForEqualValue(void);
+
+bool testForRemoveFromSortingListForNormalValue(void);
+
+bool testForRemoveFromSortingListForSingleValue(void);
+
+bool testForRemoveFromSortingListForNullValue(void);

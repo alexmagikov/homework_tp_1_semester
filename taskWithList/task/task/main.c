@@ -4,40 +4,10 @@
 #include "list.h"
 #include <stdio.h>
 #include "tests.h"
-
-void printList(List* list) {
-	Position position = first(list);
-	position = next(position);
-	while (position != NULL) {
-		printf("%d ", getValue(list, position));
-		position = next(position);
-	}
-	printf("\n");
-}
-
-void addToSortingList(List* list, Value value) {
-	Position position = first(list);
-	while (!isLast(list, position) && getValue(list, next(position)) <= value) {
-		position = next(position);
-	}
-	add(list, position, value);
-}
-
-void removeFromeSortingList(List* list, Value value) {
-	Position position = first(list);
-	while (!isLast(list, position)) {
-		if (getValue(list, next(position)) == value) {
-			if (removeFromList(list, position)) {
-				printf("success\n");
-				break;
-			}
-		}
-		position = next(position);
-	}
-}
+#include "functions.h"
 
 int main(void) {
-	if (!testForFreeList() || !testForSetValue() || !testForCreateList() || !testForAdd() || !testForGetValueForNormalValue() || !testForGetValueForNullValue() || !testForRemoveForNormalValue()) {
+	if (!testForRemoveFromSortingListForNullValue() || !testForRemoveFromSortingListForSingleValue() || !testForRemoveFromSortingListForNormalValue() ||  !testForAddToSortingListForEqualValue() || !testForAddToSortingListForNormalValue() ||  !testForAddToSortingListForSingleValue() ||  !testForSetValue() || !testForCreateList() || !testForAdd() || !testForGetValueForNormalValue() || !testForGetValueForNullValue() || !testForRemoveForNormalValue()) {
 		printf("tests are not completed");
 		return -1;
 	}
@@ -51,7 +21,8 @@ int main(void) {
 		scanf("%d", &numOfCommand);
 		switch (numOfCommand) {
 		    case 0: {
-				cleanList(list);
+				freeListElements(list);
+				free(list);
 				return 0;
 				break;
 			}
@@ -65,7 +36,7 @@ int main(void) {
 				Value value = 0;
 				printf("input a num to remove ");
 				scanf("%d", &value);
-				removeFromeSortingList(list, value);
+				removeFromSortingList(list, value);
 				break;
 			}
 			case 3: {
@@ -75,6 +46,4 @@ int main(void) {
 			}
 		}
 	}
-
-	return 0;
 }
