@@ -16,7 +16,10 @@ void initializationList(List* list, int n) {
 int searchPositionOfLastWarrior(List* list, int m) {
 	Position position = first(list);
 	int indexOfElement = 1;
-	int lastWarrior = 0;
+	int lastWarrior = -1;
+	if (next(first(list)) == NULL) {
+		return lastWarrior;
+	}
 	while (next(first(list)) != first(list) ) {
 		if (next(position) == first(list)) {
 			position = next(position);
@@ -53,8 +56,13 @@ bool testForLittleCountingForSingleValueOfManyWarriors(void) {
 	return searchPositionOfLastWarrior(list, 1) == 50;
 }
 
+bool testForLittleCountingForNullValue(void) {
+	List* list = createList();
+	return searchPositionOfLastWarrior(list, 4) == -1;
+}
+
 int main(void) {
-	if (!testForLittleCountingForSingleValueOfManyWarriors() || !testForLittleCountingForNormalValue() || !testForLittleCountingForSingleValue() || !testForSetValue() || !testForCreateList() || !testForAdd() || !testForGetValueForNormalValue() || !testForGetValueForNullValue() || !testForRemoveForNormalValue()) {
+	if (!testForLittleCountingForNullValue() || !testForLittleCountingForSingleValueOfManyWarriors() || !testForLittleCountingForNormalValue() || !testForLittleCountingForSingleValue() || !testForSetValue() || !testForCreateList() || !testForAdd() || !testForGetValueForNormalValue() || !testForGetValueForNullValue() || !testForRemoveForNormalValue()) {
 		printf("tests are not completed");
 		return -1;
 	}
