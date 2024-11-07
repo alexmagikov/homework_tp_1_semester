@@ -32,7 +32,7 @@ bool testForRemoveForNormalValue(void) {
 	Position position = first(list);
 	add(list, position, 1);
 	removeFromList(list, position);
-	return isLast(list, position);
+	return next(position) == position;
 }
 
 bool testForSetValue(void) {

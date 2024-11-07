@@ -24,13 +24,6 @@ Position first(List* list) {
 	return list->head;
 }
 
-void add(List* list, Position position, Value value) {
-	ListElement* element = malloc(sizeof(ListElement));
-	element->value = value;
-	element->next = position->next;
-	position->next = element;
-}
-
 Value getValue(List* list, Position position) {
 	if (position == NULL) {
 		return NULL;
@@ -43,7 +36,7 @@ void setValue(List* list, Position position, Value value) {
 }
 
 bool isLast(List* list, Position position) {
-	return position->next == NULL;
+	return position->next == first(list);
 }
 
 bool isValid(List* list, Position position) {
@@ -69,4 +62,16 @@ void freeListElements(List* list) {
 	while (!isLast(list, position)) {  
 		removeFromList(list, position);
 	}
+}
+
+void add(List* list, Position position, Value value) {
+	ListElement* element = malloc(sizeof(ListElement));
+	element->value = value;
+	if (position == first(list) || isLast(list, position)) {
+		element->next = first(list);
+	}
+	else {
+		element->next = position->next;
+	}
+	position->next = element;
 }
