@@ -8,7 +8,7 @@ typedef struct ListElement ListElement;
 
 typedef ListElement* Position;
 
-typedef int Value;
+typedef char* Value;
 
 List* createList(void);
 
@@ -29,3 +29,5 @@ bool isLast(List* list, Position position);
 bool isValid(List* list, Position position);
 
 void freeListElements(List* list);
+
+int getLength(List* list);

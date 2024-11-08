@@ -11,12 +11,14 @@ typedef struct ListElement {
 
 typedef struct List {
 	ListElement* head;
+	int length;
 } List;
 
 List* createList() {
 	List* list = malloc(sizeof(List));
 	ListElement* head = calloc(1, sizeof(ListElement));
 	list->head = head;
+	list->length = 0;
 	return list;
 }
 
@@ -29,6 +31,7 @@ void add(List* list, Position position, Value value) {
 	element->value = value;
 	element->next = position->next;
 	position->next = element;
+	list->length++;
 }
 
 Value getValue(List* list, Position position) {
@@ -69,4 +72,8 @@ void freeListElements(List* list) {
 	while (!isLast(list, position)) {  
 		removeFromList(list, position);
 	}
+}
+
+int getLength(List* list) {
+	return list->length;
 }
