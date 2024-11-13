@@ -7,9 +7,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define min(i, j) (((i) < (j)) ? (i) : (j))
-#define max(i, j) (((i) > (j)) ? (i) : (j))
-
 void printList(List* list) {
 	Position position = next(first(list));
 	for (int i = 0; i < getLength(list); i++) {
