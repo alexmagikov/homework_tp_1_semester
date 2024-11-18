@@ -54,5 +54,5 @@ int main() {
 			removeFromDictionary(&dictionary, key);
 		}
 	}
-	return 0;
+	return 0;÷
 }
