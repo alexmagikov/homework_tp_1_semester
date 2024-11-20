@@ -42,7 +42,7 @@ Node* createTree(char* value, int* index) {
 		node->value = number;
 		return node;
 	}
-	else if (token == '(' || token == ')') {
+	else if (token == '(' || token == ')' || token == ' ') {
 		return createTree(value, index);
 	}
 	else {
