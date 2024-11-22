@@ -29,8 +29,9 @@ Node* createTree(char* value, int* index) {
 		number[0] = token;
 		int numIndex = 1;
 		while (*index < strlen(value) && isdigit(value[*index])) {
-			number = realloc(number, (numIndex + 1) * sizeof(char));
+			number = realloc(number, (numIndex + 2) * sizeof(char));
 			if (number == NULL) {
+				free(node->value);
 				free(node);
 				return NULL;
 			}
@@ -74,9 +75,6 @@ void printTree(Node* node) {
 }
 
 int calculateTree(Node* node) {
-	if (node == NULL) {
-		return;
-	}
 	int result = 0;
 	if (isdigit(node->value[0])) {
 		return atoi(node->value);
@@ -89,18 +87,23 @@ int calculateTree(Node* node) {
 	}
 	else if (!strcmp(node->value, "*")) {
 		result = calculateTree(node->leftChild) * calculateTree(node->rightChild);
-	}
+	} 
 	else if (!strcmp(node->value, "/")) {
 		result = calculateTree(node->leftChild) / calculateTree(node->rightChild);
 	}
 }
 
 void removeTree(Node** node) {
-	if ((*node) == NULL) {
+	if (*node == NULL) {
 		return;
 	}
 	removeTree(&(*node)->leftChild);
 	removeTree(&(*node)->rightChild);
-	//free((*node)->value);
+	if ((*node)->value != NULL) {
+		free((*node)->value);
+		(*node)->value = NULL;
+	} 
 	free(*node);
+	*node = NULL;
 }
+
