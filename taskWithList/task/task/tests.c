@@ -1,6 +1,7 @@
 #include "list.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 bool testForCreateList(void) {
 	return createList() != NULL;
@@ -9,16 +10,16 @@ bool testForCreateList(void) {
 bool testForAdd(void) {
 	List* list = createList();
 	Position position = first(list);
-	add(list, position, 1);
+	add(list, position, "1");
 	return position != NULL;
 }
 
 bool testForGetValueForNormalValue(void) {
 	List* list = createList();
 	Position position = first(list);
-	add(list, position, 1);
+	add(list, position, "1");
 	position = next(position);
-	return getValue(list, position) == 1;
+	return !strcmp(getValue(list, position), "1");
 }
 
 bool testForGetValueForNullValue(void) {
@@ -30,7 +31,7 @@ bool testForGetValueForNullValue(void) {
 bool testForRemoveForNormalValue(void) {
 	List* list = createList();
 	Position position = first(list);
-	add(list, position, 1);
+	add(list, position, "1");
 	removeFromList(list, position);
 	return isLast(list, position);
 }
@@ -38,10 +39,10 @@ bool testForRemoveForNormalValue(void) {
 bool testForSetValue(void) {
 	List* list = createList();
 	Position position = first(list);
-	add(list, position, 1);
+	add(list, position, "1");
 	position = next(position);
-	add(list, position, 2);
-	setValue(list, position, 3);
-	return getValue(list, position) == 3;
+	add(list, position, "2");
+	setValue(list, position, "3");
+	return !strcmp(getValue(list, position),"3");
 }
 

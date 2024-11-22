@@ -8,12 +8,12 @@ typedef struct ListElement {
 	Value value;
 	ListElement* next;
 } ListElement;
-
+	
 typedef struct List {
 	ListElement* head;
 	int length;
 } List;
-
+    
 List* createList() {
 	List* list = malloc(sizeof(List));
 	ListElement* head = calloc(1, sizeof(ListElement));

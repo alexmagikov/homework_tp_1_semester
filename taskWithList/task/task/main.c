@@ -18,7 +18,7 @@ void printList(List* list) {
 char* getName(char* string) {
 	int index = 0;
 	char* name = NULL;
-	while (string[index] != ' ') {
+	while (string[index] != ' ' && string[index] != '\0') {
 		name = (char*)realloc(name, index + 1);
 		if (name == NULL) {
 			printf("mem fail");
@@ -247,8 +247,90 @@ bool testForMergeSortForNormalValue() {
 	return true;
 }
 
+bool testForMergeSortForEqualValue() {
+	List* list = createList();
+	Position position = first(list);
+	add(list, position, "rgegr - 123");
+	position = next(position);
+	add(list, position, "rgegr - 123");
+	position = next(position);
+	add(list, position, "rgegr - 123");
+	position = next(position);
+	add(list, position, "rgegr - 123");
+	position = next(position);
+	mergeSort(list, 1);
+	position = first(list);
+	position = next(position);
+	for (int i = 0; i < getLength(list) - 1; i++) {
+		if (strcmp(getValue(list, position), getValue(list, next(position))) > 0) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool testForMergeSortForNullValue() {
+	List* list = createList();
+	mergeSort(list, 1);
+	Position position = first(list);
+	return next(position) == NULL;
+}
+
+bool testForMergeSortForSingleValue() {
+	List* list = createList();
+	Position position = first(list);
+	add(list, position, "1");
+	position = next(position);
+	mergeSort(list, 1);
+	return !strcmp(getValue(list, position), "1") && getLength(list) == 1;
+}
+
+bool testForMergeSortForSortingList() {
+	List* list = createList();
+	Position position = first(list);
+	add(list, position, "abc - 123");
+	position = next(position);
+	add(list, position, "bcd - 123");
+	position = next(position);
+	add(list, position, "cde - 123");
+	position = next(position);
+	add(list, position, "def - 123");
+	position = next(position);
+	mergeSort(list, 1);
+	position = first(list);
+	position = next(position);
+	for (int i = 0; i < getLength(list) - 1; i++) {
+		if (strcmp(getValue(list, position), getValue(list, next(position))) > 0) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool testForMergeSortForListWithDublicates() {
+	List* list = createList();
+	Position position = first(list);
+	add(list, position, "abc - 123");
+	position = next(position);
+	add(list, position, "abc - 123");
+	position = next(position);
+	add(list, position, "dd - 123");
+	position = next(position);
+	add(list, position, "ccc - 123");
+	position = next(position);
+	mergeSort(list, 1);
+	position = first(list);
+	position = next(position);
+	for (int i = 0; i < getLength(list) - 1; i++) {
+		if (strcmp(getValue(list, position), getValue(list, next(position))) > 0) {
+			return false;
+		}
+	}
+	return true;
+}
+
 int main(void) {
-	if (!testForMergeForNormalValue() || !testForMergeForNormalValue() || !testForGetPhoneForNormalValue() || !testForGetNameForNormalValue() || !testForSetValue() || !testForCreateList() || !testForAdd() || !testForGetValueForNormalValue() || !testForGetValueForNullValue() || !testForRemoveForNormalValue()) {
+	if (!testForMergeSortForListWithDublicates() || !testForMergeSortForSortingList() || !testForMergeSortForSingleValue() || !testForMergeSortForNullValue() || !testForMergeSortForEqualValue() || !testForMergeForNormalValue() || !testForMergeForNormalValue() || !testForGetPhoneForNormalValue() || !testForGetNameForNormalValue() || !testForSetValue() || !testForCreateList() || !testForAdd() || !testForGetValueForNormalValue() || !testForGetValueForNullValue() || !testForRemoveForNormalValue()) {
 		printf("tests are not completed");
 		return -1;
 	}
