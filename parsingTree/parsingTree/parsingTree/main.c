@@ -29,11 +29,12 @@ int main() {
     }
     fclose(file);
     prefixExpression[lenPrefixExpression] = '\0';
-    
+
     int index = 0;
     Node* node = createTree(prefixExpression, &index);
     printf("tree: ");
     printTree(node);
     printf("\nresult: %d", calculateTree(node));
+    removeTree(&node);
     return 0;
 }

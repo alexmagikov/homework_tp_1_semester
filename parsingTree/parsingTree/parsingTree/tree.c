@@ -40,7 +40,7 @@ Node* createTree(char* value, int* index) {
 		}
 		number[numIndex] = '\0';
 		node->value = number;
-		return node;
+		return node; 
 	}
 	else if (token == '(' || token == ')' || token == ' ') {
 		return createTree(value, index);
@@ -93,4 +93,14 @@ int calculateTree(Node* node) {
 	else if (!strcmp(node->value, "/")) {
 		result = calculateTree(node->leftChild) / calculateTree(node->rightChild);
 	}
+}
+
+void removeTree(Node** node) {
+	if ((*node) == NULL) {
+		return;
+	}
+	removeTree(&(*node)->leftChild);
+	removeTree(&(*node)->rightChild);
+	//free((*node)->value);
+	free(*node);
 }
