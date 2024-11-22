@@ -53,7 +53,8 @@ char* getPhone(char* string) {
 	return phone;
 }
 
-void initializationList(List* list) {
+List* initializationList() {
+	List* list = createList();
 	Position position = first(list);
 
 	FILE* file = fopen("file.txt", "r");
@@ -67,15 +68,16 @@ void initializationList(List* list) {
 	if (buffer == NULL) {
 		printf("mem fail");
 		fclose(file);
-		return;
+		return NULL;
 	}
-
+    
 	while (fgets(buffer, stringLength, file) != NULL) {
 		char* value = malloc(strlen(buffer));
 		if (value == NULL) {
+			free(buffer);
 			printf("mem fail");
 			fclose(file);
-			return;
+			return NULL;
 		}
 		value = strcpy(value, buffer);
 		value[strlen(value) - 1] = '\0';
@@ -84,6 +86,7 @@ void initializationList(List* list) {
 	}
 	free(buffer);
 	fclose(file);
+	return list;
 }	
 
 List* merge(List* firstList, List* secondList, int command) {
@@ -113,7 +116,6 @@ List* merge(List* firstList, List* secondList, int command) {
 				secondListPosition = next(secondListPosition);
 				secondListIndex++;
 			}
-			resultListPosition = next(resultListPosition);
 		}
 		else if (command = 2) {
 			char* firstString = getValue(firstList, firstListPosition);
@@ -128,8 +130,8 @@ List* merge(List* firstList, List* secondList, int command) {
 				secondListPosition = next(secondListPosition);
 				secondListIndex++;
 			}
-			resultListPosition = next(resultListPosition);
 		}
+		resultListPosition = next(resultListPosition);
 	}
 
 	while (firstListIndex < getLength(firstList)) {
@@ -146,21 +148,6 @@ List* merge(List* firstList, List* secondList, int command) {
 		secondListPosition = next(secondListPosition);
 	}
 
-	return resultList;
-}
-
-List* createListByIndexes(List* list, int leftIndex, int rightIndex) {
-	Position positionList = first(list);
-	positionList = next(positionList);
-
-	List* resultList = createList();
-	Position resultListPosition = first(resultList);
-
-	for (int i = leftIndex; i < rightIndex; i++) {
-		add(resultList, resultListPosition, getValue(list, positionList));
-		resultListPosition = next(resultListPosition);
-		positionList = next(positionList);
-	}
 	return resultList;
 }
 
@@ -191,12 +178,10 @@ void mergeSort(List* list, int command) {
 		rightListPosition = next(rightListPosition);
 		positionList = next(positionList);
 	}
-	/*
-	List* leftList = createListByIndexes(list, 0, midIndex);
-	List* rightList = createListByIndexes(list, midIndex, getLength(list));
-	*/
+
 	mergeSort(leftList, command);
 	mergeSort(rightList, command);
+
 	List* resultList = merge(leftList, rightList, command);
 	Position resultListPosition = first(resultList);
 	resultListPosition = next(resultListPosition);
@@ -209,30 +194,72 @@ void mergeSort(List* list, int command) {
 	}
 }
 
-bool testForMerge() {
-
+bool testForGetNameForNormalValue() {
+	return !strcmp(getName("mark - 123"), "mark");
 }
 
-bool testForMergeSort() {
-
+bool testForGetPhoneForNormalValue() {
+	return !strcmp(getPhone("mark - 123"), "123");
 }
 
-bool testForInitializationList() {
+bool testForMergeForNormalValue() {
+	List* firstList = createList();
+	Position firstListPosition = first(firstList);
+	List* secondList = createList();
+	Position secondListPosition = first(secondList);
+	add(firstList, firstListPosition, "alex - 123");
+	add(secondList, secondListPosition, "eva - 123");
+	firstListPosition = next(firstListPosition);
+	secondListPosition = next(secondListPosition);
+	add(firstList, firstListPosition, "fil - 123");
+	add(secondList, secondListPosition, "goga - 123");
+	
+	List* resultList = merge(firstList, secondList, 1);
+	Position resultListPosition = first(resultList);
+	resultListPosition = next(resultListPosition);
+	for (int i = 0; i < getLength(resultList) - 1; i++) {
+		if (strcmp(getValue(resultList, resultListPosition), getValue(resultList, next(resultListPosition))) > 0) {
+			return false;
+		}
+	}
+	return true;
+}
 
+bool testForMergeSortForNormalValue() {
+	List* list = createList();
+	Position position = first(list);
+	add(list, position, "rgegr - 123");
+	position = next(position);
+	add(list, position, "kgeg - 123");
+	position = next(position);
+	add(list, position, "alex - 123");
+	position = next(position);
+	add(list, position, "cclex - 123");
+	position = next(position);
+	mergeSort(list, 1);
+	position = first(list);
+	position = next(position);
+	for (int i = 0; i < getLength(list) - 1; i++) {
+		if (strcmp(getValue(list, position), getValue(list, next(position))) > 0) {
+			return false;
+		}
+	}
+	return true;
 }
 
 int main(void) {
-	if (!testForSetValue() || !testForCreateList() || !testForAdd() || !testForGetValueForNormalValue() || !testForGetValueForNullValue() || !testForRemoveForNormalValue()) {
+	if (!testForMergeForNormalValue() || !testForMergeForNormalValue() || !testForGetPhoneForNormalValue() || !testForGetNameForNormalValue() || !testForSetValue() || !testForCreateList() || !testForAdd() || !testForGetValueForNormalValue() || !testForGetValueForNullValue() || !testForRemoveForNormalValue()) {
 		printf("tests are not completed");
 		return -1;
 	}
-	List* list = createList();
+	List* list = initializationList();
 
 	int command = 2;
 	printf("input command of sorting parameter(1 - sorting for names, 2 - sorting for phones): ");
 	scanf("%d", &command);
-	initializationList(list);
 	mergeSort(list, command);
 	printList(list);
+	freeListElements(list);
+	free(list);
 	return 0;
 }

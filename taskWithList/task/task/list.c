@@ -61,6 +61,7 @@ void removeFromList(List* list, Position position) {
 	List* tmp = position->next->next;
 	free(position->next);
 	position->next = tmp;
+	list->length -= 1;
 }
 
 Position next(Position position) {
@@ -69,7 +70,7 @@ Position next(Position position) {
 
 void freeListElements(List* list) {
 	Position position = first(list);
-	while (!isLast(list, position)) {  
+	while (!isLast(list, position)) {
 		removeFromList(list, position);
 	}
 }
