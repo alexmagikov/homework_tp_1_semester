@@ -3,6 +3,7 @@
 typedef struct Dictionary Dictionary;
 
 typedef struct Value {
+    int balance;
     int height;
     const char* key;
     const char* value;
@@ -19,4 +20,4 @@ Dictionary* BigRightRotation(Dictionary* dictionary);
 //Dictionary* balance(Dictionary* dictionary);
 
 //insert value by key in dictionary. 
-void insert(Dictionary** dictionary, const char* key, const char* value, int height);
+void insert(Dictionary** dictionary, const char* key, const char* value);
