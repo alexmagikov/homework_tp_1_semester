@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 typedef struct Dictionary {
     Value value;
@@ -113,3 +114,126 @@ void insert(Dictionary** dictionary, const char* key, const char* value) {
     *dictionary =  balance(*dictionary);
 }
 
+bool find(Dictionary* dictionary, const char* key) {
+    if (dictionary == NULL) {
+        return false;
+    }
+    if (strcmp(key, dictionary->value.key) < 0) {
+        return find(dictionary->leftChild, key);
+    }
+    else if (strcmp(key, dictionary->value.key) > 0) {
+        return find(dictionary->rightChild, key);
+    }
+    else if (!strcmp(key, dictionary->value.key)) {
+        return true;
+    }
+}
+
+char* getValue(Dictionary* dictionary, const char* key) {
+    if (dictionary == NULL) {
+        return NULL;
+    }
+    if (strcmp(key, dictionary->value.key) < 0) {
+        return getValue(dictionary->leftChild, key);
+    }
+    else if (strcmp(key, dictionary->value.key) > 0) {
+        return getValue(dictionary->rightChild, key);
+    }
+    else if (!strcmp(key, dictionary->value.key)) {
+        return dictionary->value.value;
+    }
+}
+
+void freeDictionary(Dictionary** dictionary) {
+    free((*dictionary)->value.value);
+    free(*dictionary);
+    *dictionary = NULL;
+}
+
+void removeFromDictionary(Dictionary** dictionary, const char* key) {
+    if (*dictionary == NULL) {
+        return;
+    }
+    if (strcmp(key, (*dictionary)->value.key) > 0) {
+        removeFromDictionary(&(*dictionary)->rightChild, key);
+    }
+    else if (strcmp(key, (*dictionary)->value.key) < 0) {
+        removeFromDictionary(&(*dictionary)->leftChild, key);
+    }
+    else if (!strcmp(key, (*dictionary)->value.key)) {
+        if ((*dictionary)->leftChild == NULL && (*dictionary)->rightChild == NULL) {
+            freeDictionary(dictionary);
+        }
+
+        else if ((*dictionary)->leftChild != NULL && (*dictionary)->rightChild == NULL) {
+            free((*dictionary)->value.value);
+            (*dictionary)->value = (*dictionary)->leftChild->value;
+            (*dictionary)->leftChild->value.value = NULL;
+            freeDictionary(&(*dictionary)->leftChild);
+        }
+
+        else if ((*dictionary)->leftChild == NULL && (*dictionary)->rightChild != NULL) {
+            free((*dictionary)->value.value);
+            (*dictionary)->value = (*dictionary)->rightChild->value;
+            (*dictionary)->rightChild->value.value = NULL;
+            freeDictionary(&(*dictionary)->rightChild);
+        }
+
+        else if ((*dictionary)->leftChild != NULL && (*dictionary)->rightChild != NULL) {
+            free((*dictionary)->value.value);
+            if ((*dictionary)->rightChild->leftChild == NULL) {
+                (*dictionary)->value = (*dictionary)->rightChild->value;
+                Dictionary* tmp = (*dictionary)->rightChild;
+                (*dictionary)->rightChild = tmp->rightChild;
+                tmp->value.value = NULL;
+                freeDictionary(&tmp);
+            }
+            else {
+                Dictionary* tmp = (*dictionary)->rightChild;
+                while (tmp->leftChild->leftChild != NULL) {
+                    tmp = tmp->leftChild;
+                }
+                (*dictionary)->value = tmp->leftChild->value;
+                if (tmp->leftChild->rightChild == NULL) {
+                    tmp->leftChild->value.value = NULL;
+                    freeDictionary(&tmp->leftChild);
+                }
+                else {
+                    Dictionary* rightChildTmp = tmp->leftChild->rightChild;
+                    tmp->leftChild->value.value = NULL;
+                    freeDictionary(&tmp->leftChild);
+                    tmp->leftChild = rightChildTmp;
+                }
+            }
+        }
+    }
+    int rightHeight = ((*dictionary)->rightChild == NULL) ? 0 : (*dictionary)->rightChild->value.height;
+    int leftHeight = ((*dictionary)->leftChild == NULL) ? 0 : (*dictionary)->leftChild->value.height;
+
+    (*dictionary)->value.height = (rightHeight > leftHeight ? rightHeight : leftHeight) + 1;
+    (*dictionary)->value.balance = rightHeight - leftHeight;
+
+    *dictionary = balance(*dictionary);
+}
+
+void print(Dictionary* dictionary) {
+    if (dictionary == NULL) {
+        return;
+    }
+    else {
+        print(dictionary->leftChild);
+        printf("%d - %s\n", dictionary->value.key, dictionary->value.value);
+        print(dictionary->rightChild);
+    }
+}
+
+void removeDictionary(Dictionary** dictionary) {
+    if (*dictionary == NULL) {
+        free(*dictionary);
+        return;
+    }
+    removeDictionary(&(*dictionary)->leftChild);
+    removeDictionary(&(*dictionary)->rightChild);
+    free(*dictionary);
+    *dictionary = NULL;
+}
