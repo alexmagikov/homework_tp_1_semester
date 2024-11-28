@@ -146,6 +146,7 @@ char* getValue(Dictionary* dictionary, const char* key) {
 
 void freeDictionary(Dictionary** dictionary) {
     free((*dictionary)->value.value);
+    free((*dictionary)->value.key);
     free(*dictionary);
     *dictionary = NULL;
 }
@@ -169,6 +170,7 @@ void removeFromDictionary(Dictionary** dictionary, const char* key) {
             free((*dictionary)->value.value);
             (*dictionary)->value = (*dictionary)->leftChild->value;
             (*dictionary)->leftChild->value.value = NULL;
+            (*dictionary)->leftChild->value.key = NULL;
             freeDictionary(&(*dictionary)->leftChild);
         }
 
@@ -176,16 +178,19 @@ void removeFromDictionary(Dictionary** dictionary, const char* key) {
             free((*dictionary)->value.value);
             (*dictionary)->value = (*dictionary)->rightChild->value;
             (*dictionary)->rightChild->value.value = NULL;
+            (*dictionary)->rightChild->value.key = NULL;
             freeDictionary(&(*dictionary)->rightChild);
         }
 
         else if ((*dictionary)->leftChild != NULL && (*dictionary)->rightChild != NULL) {
             free((*dictionary)->value.value);
+            free((*dictionary)->value.key);
             if ((*dictionary)->rightChild->leftChild == NULL) {
                 (*dictionary)->value = (*dictionary)->rightChild->value;
                 Dictionary* tmp = (*dictionary)->rightChild;
                 (*dictionary)->rightChild = tmp->rightChild;
                 tmp->value.value = NULL;
+                tmp->value.key = NULL;
                 freeDictionary(&tmp);
             }
             else {
@@ -196,16 +201,19 @@ void removeFromDictionary(Dictionary** dictionary, const char* key) {
                 (*dictionary)->value = tmp->leftChild->value;
                 if (tmp->leftChild->rightChild == NULL) {
                     tmp->leftChild->value.value = NULL;
+                    tmp->leftChild->value.key = NULL;
                     freeDictionary(&tmp->leftChild);
                 }
                 else {
                     Dictionary* rightChildTmp = tmp->leftChild->rightChild;
                     tmp->leftChild->value.value = NULL;
+                    tmp->leftChild->value.key = NULL;
                     freeDictionary(&tmp->leftChild);
                     tmp->leftChild = rightChildTmp;
                 }
             }
         }
+        return;
     }
     int rightHeight = ((*dictionary)->rightChild == NULL) ? 0 : (*dictionary)->rightChild->value.height;
     int leftHeight = ((*dictionary)->leftChild == NULL) ? 0 : (*dictionary)->leftChild->value.height;
@@ -216,16 +224,6 @@ void removeFromDictionary(Dictionary** dictionary, const char* key) {
     *dictionary = balance(*dictionary);
 }
 
-void print(Dictionary* dictionary) {
-    if (dictionary == NULL) {
-        return;
-    }
-    else {
-        print(dictionary->leftChild);
-        printf("%d - %s\n", dictionary->value.key, dictionary->value.value);
-        print(dictionary->rightChild);
-    }
-}
 
 void removeDictionary(Dictionary** dictionary) {
     if (*dictionary == NULL) {
@@ -236,4 +234,34 @@ void removeDictionary(Dictionary** dictionary) {
     removeDictionary(&(*dictionary)->rightChild);
     free(*dictionary);
     *dictionary = NULL;
+}
+
+char* getRightChild(Dictionary* dictionary, const char* key) {
+    if (dictionary == NULL) {
+        return NULL;
+    }
+    if (strcmp(key, dictionary->value.key) < 0) {
+        return getRightChild(dictionary->leftChild, key);
+    }
+    else if (strcmp(key, dictionary->value.key) > 0) {
+        return getRightChild(dictionary->rightChild, key);
+    }
+    else if (!strcmp(key, dictionary->value.key)) {
+        return dictionary->rightChild->value.key;
+    }
+}
+
+char* getLeftChild(Dictionary* dictionary, const char* key) {
+    if (dictionary == NULL) {
+        return NULL;
+    }
+    if (strcmp(key, dictionary->value.key) < 0) {
+        return getLeftChild(dictionary->leftChild, key);
+    }
+    else if (strcmp(key, dictionary->value.key) > 0) {
+        return getLeftChild(dictionary->rightChild, key);
+    }
+    else if (!strcmp(key, dictionary->value.key)) {
+        return dictionary->leftChild->value.key;
+    }
 }
