@@ -17,10 +17,10 @@ typedef struct HashTable {
     int numOfElements;
 } HashTable;
 
-int hash(char* value) {
+int hash(char* value, int size) {
     int result = 0;
     for (int i = 0; value[i] != '\0'; i++) {
-        result = (result + value[i]) % 100;
+        result = (result + value[i]) % size;
     }
     return result;
 }
@@ -50,7 +50,7 @@ HashItem* createHashItem(int hash, char* value) {
     }
     List* entries = createList();
     Position position = first(entries);
-    Value hashItemValue = {.entry = malloc(sizeof(char) * strlen(value)),.count = 1};
+    Value hashItemValue = {.entry = malloc(sizeof(char) * (1 + strlen(value))),.count = 1};
     strcpy(hashItemValue.entry, value);
     add(entries, position, hashItemValue);
     hashItem->entries = entries;
@@ -71,7 +71,7 @@ HashTable* addToHashItem(HashTable* hashTable, int index, char* value) {
             return hashTable;
         }
     }
-    Value newValue = { .count = 0, .entry = malloc(strlen(value) * sizeof(char)) };
+    Value newValue = { .count = 0, .entry = malloc((strlen(value) + 1) * sizeof(char)) };
     strcpy(newValue.entry, value);
     add(list, position, newValue);
     hashTable->numOfElements++;
@@ -79,11 +79,14 @@ HashTable* addToHashItem(HashTable* hashTable, int index, char* value) {
     return hashTable;
 }
 
+HashTable* updateHashTable(HashTable* hashTable) {
+
+}
+
 HashTable* insert(HashTable* hashTable, char* value) {
-    int index = hash(value);
+    int index = hash(value, hashTable->size);
     if (hashTable->size == hashTable->numOfElements) {
-        printf("hashtable is full");
-        return NULL;
+        hashTable = updateHashTable(hashTable);
     }
     if (hashTable->buckets[index] == NULL) {
         hashTable->buckets[index] = createHashItem(index, value);
@@ -96,7 +99,7 @@ HashTable* insert(HashTable* hashTable, char* value) {
 }
 
 int getCount(HashTable* hashTable, char* value) {
-    int index = hash(value);
+    int index = hash(value, hashTable->size);
     if (hashTable->buckets[index] == NULL) {
         return -1;
     }
@@ -124,10 +127,10 @@ void printHashTable(HashTable* hashTable) {
 }
 
 HashTable* removeFromHashTable(HashTable* hashTable, char* value) {
-    int index = hash(value);
+    int index = hash(value, hashTable->size);
     if (hashTable->buckets[index] == NULL) {
         printf("error: no value in hashTable");
-        return;
+        return NULL;
     }
     List* list = hashTable->buckets[index]->entries;
     Position position = first(list);

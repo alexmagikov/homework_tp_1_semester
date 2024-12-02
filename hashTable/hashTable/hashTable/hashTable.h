@@ -13,6 +13,9 @@ HashItem* createHashItem(int hash, char* value);
 // insert value in hashtable. If value consist then count of value increases
 HashTable* insert(HashTable* hashtable, char* value);
 
+// return new hashTable with size * 2
+HashTable* updateHashTable(HashTable* hashTable);
+
 // seatch number of occurences of value in text. If there is no value return -1
 int getCount(HashTable* hashtable, char* value);
 
