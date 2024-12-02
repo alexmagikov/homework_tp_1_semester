@@ -32,3 +32,5 @@ bool isLast(List* list, Position position);
 bool isValid(List* list, Position position);
 
 void freeList(List* list);
+
+int getLength(List* list);

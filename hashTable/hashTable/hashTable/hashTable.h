@@ -29,7 +29,10 @@ HashTable* removeFromHashTable(HashTable* hashTable, char* value);
 void removeHashTable(HashTable* hashTable);
 
 // return fill factor. return 0 if hashTable is empty
-int returnFillFactor(HashTable* hashTable);
+int getFillFactor(HashTable* hashTable);
 
 // return avarage length of lists of buckets. return 0 if hashTable is empty
-int returnAvarageLengthOfListsOfBuckets(HashTable* hashTable);
+int getAvarageLengthOfListsOfBuckets(HashTable* hashTable);
+
+// return max length of lists of buckets. return 0 if hashTable is empty
+int getMaxLengthOfList(HashTable* hashTable);

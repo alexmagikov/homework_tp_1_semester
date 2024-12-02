@@ -16,6 +16,7 @@ int main() {
     insert(hashtable, "abobuaegrea");
     printHashTable(hashtable);
     removeFromHashTable(hashtable, "abfwf");
+    printf("\n");
     printHashTable(hashtable);
     return 0;
 }

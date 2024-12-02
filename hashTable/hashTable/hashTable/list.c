@@ -14,12 +14,14 @@ typedef struct ListElement {
 
 typedef struct List {
 	ListElement* head;
+	int length;
 } List;
 
 List* createList() {
 	List* list = malloc(sizeof(List));
 	ListElement* head = calloc(1, sizeof(ListElement));
 	list->head = head;
+	list->length = 0;
 	return list;
 }
 
@@ -29,11 +31,12 @@ Position first(List* list) {
 
 void add(List* list, Position position, Value value) {
 	ListElement* element = calloc(1, sizeof(ListElement));
-	element->value.entry = malloc(strlen(value.entry) * sizeof(char));
+	element->value.entry = malloc((strlen(value.entry) + 1) * sizeof(char));
 	strcpy(element->value.entry, value.entry);
 	element->value.count = value.count;
 	element->next = position->next;
 	position->next = element;
+	list->length++;
 }
 
 Value getValue(List* list, Position position) {
@@ -65,6 +68,7 @@ void removeFromList(List* list, Position position) {
 	free(position->next->value.entry);
 	free(position->next);
 	position->next = tmp;
+	list->length--;
 }
 
 Position next(Position position) {
@@ -77,4 +81,8 @@ void freeList(List* list) {
 		removeFromList(list, position);
 	}
 	free(list);
+}
+
+int getLength(List* list) {
+	return list->length;
 }
