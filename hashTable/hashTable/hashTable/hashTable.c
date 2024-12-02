@@ -1,0 +1,159 @@
+#define _CRT_SECURE_NO_WARNINGS
+
+#include "hashTable.h"
+#include "list.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
+typedef struct HashItem {
+    int hash;
+    List* entries;
+} HashItem;
+
+typedef struct HashTable {
+    HashItem** buckets;
+    int size;
+    int numOfElements;
+} HashTable;
+
+int hash(char* value) {
+    int result = 0;
+    for (int i = 0; value[i] != '\0'; i++) {
+        result = (result + value[i]) % 100;
+    }
+    return result;
+}
+
+HashTable* createHashTable(int size) {
+    HashTable* hashTable = (HashTable*)malloc(sizeof(HashTable));
+    if (hashTable == NULL) {
+        return NULL;
+    }
+    hashTable->buckets = (HashItem**)malloc(size * sizeof(HashItem*));
+    if (hashTable->buckets == NULL) {
+        free(hashTable);
+        return NULL;
+    }
+    for (int i = 0; i < size; i++) {
+        hashTable->buckets[i] = NULL;
+    }
+    hashTable->size = size;
+    hashTable->numOfElements = 0;
+    return hashTable;
+}
+
+HashItem* createHashItem(int hash, char* value) {
+    HashItem* hashItem = (HashItem*)malloc(sizeof(HashItem));
+    if (hashItem == NULL) {
+        return NULL;
+    }
+    List* entries = createList();
+    Position position = first(entries);
+    Value hashItemValue = {.entry = malloc(sizeof(char) * strlen(value)),.count = 1};
+    strcpy(hashItemValue.entry, value);
+    add(entries, position, hashItemValue);
+    hashItem->entries = entries;
+    hashItem->hash = hash;
+    return hashItem;
+}
+
+HashTable* addToHashItem(HashTable* hashTable, int index, char* value) {
+    HashItem* hashItem = hashTable->buckets[index];
+    List* list = hashItem->entries;
+    Position position = first(list);
+    while (!isLast(list, position)) {
+        position = next(position);
+        if (!strcmp(getValue(list, position).entry, value)) {
+            Value newValue = { .count = getValue(list, position).count + 1, .entry = getValue(list, position).entry };
+            setValue(list, position, newValue);
+            hashItem->entries = list;
+            return hashTable;
+        }
+    }
+    Value newValue = { .count = 0, .entry = malloc(strlen(value) * sizeof(char)) };
+    strcpy(newValue.entry, value);
+    add(list, position, newValue);
+    hashTable->numOfElements++;
+    hashItem->entries = list;
+    return hashTable;
+}
+
+HashTable* insert(HashTable* hashTable, char* value) {
+    int index = hash(value);
+    if (hashTable->size == hashTable->numOfElements) {
+        printf("hashtable is full");
+        return NULL;
+    }
+    if (hashTable->buckets[index] == NULL) {
+        hashTable->buckets[index] = createHashItem(index, value);
+        hashTable->numOfElements++;
+    }
+    else {
+        return addToHashItem(hashTable, index, value);
+    }
+}
+
+int getCount(HashTable* hashTable, char* value) {
+    int index = hash(value);
+    if (hashTable->buckets[index] == NULL) {
+        return -1;
+    }
+    List* list = hashTable->buckets[index]->entries;
+    Position position = first(list);
+    while (!isLast(list, position)) {
+        position = next(position);
+        if (!strcmp(getValue(list, position).entry, value)) {
+            return getValue(list, position).count;
+        }
+    }
+}
+
+void printHashTable(HashTable* hashTable) {
+    for (int i = 0; i < hashTable->size; i++) {
+        if (!(hashTable->buckets[i] != NULL)) {
+            List* list = hashTable->buckets[i]->entries;
+            Position position = first(list);
+            while (!isLast(list, position)) {
+                position = next(position);
+                printf("%d - %s - %d", hashTable->buckets[i]->hash, getValue(list, position).entry, getValue(list, position).count);
+            }
+        }
+    }
+}
+
+HashTable* removeFromHashTable(HashTable* hashTable, char* value) {
+    int index = hash(value);
+    if (hashTable->buckets[index] == NULL) {
+        printf("error: no value in hashTable");
+        return;
+    }
+    List* list = hashTable->buckets[index]->entries;
+    Position position = first(list);
+    while (!isLast(list, position)) {
+        if (!strcmp(getValue(list, next(position)).entry, value)) {
+            removeFromList(list, position);
+        }
+        position = next(position);
+    }
+    return hashTable;
+}
+
+HashTable* removeHashTable(HashTable* hashTable) {
+    for (int i = 0; i < hashTable->size; i++) {
+        if (!(hashTable->buckets[i] != NULL)) {
+            List* list = hashTable->buckets[i]->entries;
+            Position position = first(list);
+            while (!isLast(list, position)) {
+                removeFromList(list, position);
+                position = next(position);
+            }
+        }
+    }
+    free(hashTable);
+}
+
+int returnFillFactor(HashTable* hashTable) {
+
+}
+
