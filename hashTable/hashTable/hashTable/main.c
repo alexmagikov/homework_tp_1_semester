@@ -11,6 +11,9 @@ int main() {
     }
     HashTable* hashtable = createHashTable(100);
     insert(hashtable, "abobus");
+    insert(hashtable, "abobus");
+    insert(hashtable, "abfwf");
+    insert(hashtable, "abobuaegrea");
     printHashTable(hashtable);
     return 0;
 }

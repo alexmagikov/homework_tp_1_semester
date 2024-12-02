@@ -92,6 +92,7 @@ HashTable* insert(HashTable* hashTable, char* value) {
     else {
         return addToHashItem(hashTable, index, value);
     }
+    return hashTable;
 }
 
 int getCount(HashTable* hashTable, char* value) {
@@ -111,12 +112,12 @@ int getCount(HashTable* hashTable, char* value) {
 
 void printHashTable(HashTable* hashTable) {
     for (int i = 0; i < hashTable->size; i++) {
-        if (!(hashTable->buckets[i] != NULL)) {
+        if (!(hashTable->buckets[i] == NULL)) {
             List* list = hashTable->buckets[i]->entries;
             Position position = first(list);
             while (!isLast(list, position)) {
                 position = next(position);
-                printf("%d - %s - %d", hashTable->buckets[i]->hash, getValue(list, position).entry, getValue(list, position).count);
+                printf("%d - %s - %d\n", hashTable->buckets[i]->hash, getValue(list, position).entry, getValue(list, position).count);
             }
         }
     }
