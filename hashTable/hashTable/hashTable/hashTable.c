@@ -43,7 +43,7 @@ HashTable* createHashTable(int size) {
     return hashTable;
 }
 
-HashItem* createHashItem(int hash, char* value) {
+HashItem* createHashItem(int hashValue, char* value) {
     HashItem* hashItem = (HashItem*)malloc(sizeof(HashItem));
     if (hashItem == NULL) {
         return NULL;
@@ -54,7 +54,7 @@ HashItem* createHashItem(int hash, char* value) {
     strcpy(hashItemValue.entry, value);
     add(entries, position, hashItemValue);
     hashItem->entries = entries;
-    hashItem->hash = hash;
+    hashItem->hash = hashValue;
     return hashItem;
 }
 
@@ -71,7 +71,7 @@ HashTable* addToHashItem(HashTable* hashTable, int index, char* value) {
             return hashTable;
         }
     }
-    Value newValue = { .count = 0, .entry = malloc((strlen(value) + 1) * sizeof(char)) };
+    Value newValue = { .count = 1, .entry = malloc((strlen(value) + 1) * sizeof(char)) };
     strcpy(newValue.entry, value);
     add(list, position, newValue);
     hashTable->numOfElements++;
@@ -85,7 +85,7 @@ HashTable* updateHashTable(HashTable* hashTable) {
 
 HashTable* insert(HashTable* hashTable, char* value) {
     int index = hash(value, hashTable->size);
-    if (hashTable->size == hashTable->numOfElements) {
+    if (returnFillFactor(hashTable) > 1) {
         hashTable = updateHashTable(hashTable);
     }
     if (hashTable->buckets[index] == NULL) {
@@ -134,6 +134,13 @@ HashTable* removeFromHashTable(HashTable* hashTable, char* value) {
     }
     List* list = hashTable->buckets[index]->entries;
     Position position = first(list);
+    if (isLast(list, next(position))) {
+        removeFromList(list, position);
+        free(hashTable->buckets[index]->entries);
+        free(hashTable->buckets[index]);
+        hashTable->buckets[index] = NULL;
+        return hashTable;
+    }
     while (!isLast(list, position)) {
         if (!strcmp(getValue(list, next(position)).entry, value)) {
             removeFromList(list, position);
@@ -143,9 +150,9 @@ HashTable* removeFromHashTable(HashTable* hashTable, char* value) {
     return hashTable;
 }
 
-HashTable* removeHashTable(HashTable* hashTable) {
+void removeHashTable(HashTable* hashTable) {
     for (int i = 0; i < hashTable->size; i++) {
-        if (!(hashTable->buckets[i] != NULL)) {
+        if (!(hashTable->buckets[i] == NULL)) {
             List* list = hashTable->buckets[i]->entries;
             Position position = first(list);
             while (!isLast(list, position)) {
@@ -158,6 +165,21 @@ HashTable* removeHashTable(HashTable* hashTable) {
 }
 
 int returnFillFactor(HashTable* hashTable) {
+    return hashTable->numOfElements / hashTable->size;
+}
 
+int returnAvarageLengthOfListsOfBuckets(HashTable* hashTable) {
+    int sumOfLength = 0;
+    for (int i = 0; i < hashTable->size; i++) {
+        if (!(hashTable->buckets[i] == NULL)) {
+            List* list = hashTable->buckets[i]->entries;
+            Position position = first(list);
+            while (!isLast(list, position)) {
+                position = next(position);
+                sumOfLength++;
+            }
+        }
+    }
+    return sumOfLength / hashTable->numOfElements;
 }
 

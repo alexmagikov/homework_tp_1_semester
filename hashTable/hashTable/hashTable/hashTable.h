@@ -8,7 +8,7 @@ typedef struct HashTable HashTable;
 HashTable* createHashTable(int size);
 
 // createHashItem and initialize them value
-HashItem* createHashItem(int hash, char* value);
+HashItem* createHashItem(int hashValue, char* value);
 
 // insert value in hashtable. If value consist then count of value increases
 HashTable* insert(HashTable* hashtable, char* value);
@@ -26,7 +26,10 @@ void printHashTable(HashTable* hashTable);
 HashTable* removeFromHashTable(HashTable* hashTable, char* value);
 
 // free hashTable
-HashTable* removeHashTable(HashTable* hashTable);
+void removeHashTable(HashTable* hashTable);
 
-// return fill factor
+// return fill factor. return 0 if hashTable is empty
 int returnFillFactor(HashTable* hashTable);
+
+// return avarage length of lists of buckets. return 0 if hashTable is empty
+int returnAvarageLengthOfListsOfBuckets(HashTable* hashTable);
