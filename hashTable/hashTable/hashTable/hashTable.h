@@ -4,6 +4,9 @@ typedef struct HashItem HashItem;
 
 typedef struct HashTable HashTable;
 
+// return hashValue by value and size of HashTable
+int hash(char* value, int size);
+
 // create HashTable with size (size) and initialzie them NULL value
 HashTable* createHashTable(int size);
 
@@ -13,7 +16,7 @@ HashItem* createHashItem(int hashValue, char* value);
 // insert value in hashtable. If value consist then count of value increases
 HashTable* insert(HashTable* hashtable, char* value);
 
-// return new hashTable with size * 2
+// return new hashTable with last size * 2
 HashTable* updateHashTable(HashTable* hashTable);
 
 // seatch number of occurences of value in text. If there is no value return -1
@@ -29,7 +32,7 @@ HashTable* removeFromHashTable(HashTable* hashTable, char* value);
 void removeHashTable(HashTable* hashTable);
 
 // return fill factor. return 0 if hashTable is empty
-int getFillFactor(HashTable* hashTable);
+float getFillFactor(HashTable* hashTable);
 
 // return avarage length of lists of buckets. return 0 if hashTable is empty
 int getAvarageLengthOfListsOfBuckets(HashTable* hashTable);

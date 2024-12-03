@@ -80,7 +80,20 @@ HashTable* addToHashItem(HashTable* hashTable, int index, char* value) {
 }
 
 HashTable* updateHashTable(HashTable* hashTable) {
-
+    HashTable* newHashTable = createHashTable(hashTable->size * 2);
+    for (int i = 0; i < hashTable->size; i++) {
+        if (hashTable->buckets[i] != NULL) {
+            List* list = hashTable->buckets[i]->entries;
+            Position position = first(list);
+            while (!isLast(list, position)) {
+                position = next(position);
+                for (int j = 0; j < getValue(list, position).count; j++) {
+                    newHashTable = insert(newHashTable, getValue(list, position).entry);
+                }
+            }
+        }
+    }
+    return newHashTable;
 }
 
 HashTable* insert(HashTable* hashTable, char* value) {
@@ -115,7 +128,7 @@ int getCount(HashTable* hashTable, char* value) {
 
 void printHashTable(HashTable* hashTable) {
     for (int i = 0; i < hashTable->size; i++) {
-        if (!(hashTable->buckets[i] == NULL)) {
+        if (hashTable->buckets[i] != NULL) {
             List* list = hashTable->buckets[i]->entries;
             Position position = first(list);
             while (!isLast(list, position)) {
@@ -152,26 +165,26 @@ HashTable* removeFromHashTable(HashTable* hashTable, char* value) {
 
 void removeHashTable(HashTable* hashTable) {
     for (int i = 0; i < hashTable->size; i++) {
-        if (!(hashTable->buckets[i] == NULL)) {
+        if (hashTable->buckets[i] != NULL) {
             List* list = hashTable->buckets[i]->entries;
             Position position = first(list);
             while (!isLast(list, position)) {
                 removeFromList(list, position);
-                position = next(position);
             }
         }
     }
     free(hashTable);
 }
 
-int getFillFactor(HashTable* hashTable) {
-    return hashTable->numOfElements / hashTable->size;
+float getFillFactor(HashTable* hashTable) {
+    float result = (float)hashTable->numOfElements / (float)hashTable->size;
+    return result;
 }
 
 int getAvarageLengthOfListsOfBuckets(HashTable* hashTable) {
     int sumOfLength = 0;
     for (int i = 0; i < hashTable->size; i++) {
-        if (!(hashTable->buckets[i] == NULL)) {
+        if (hashTable->buckets[i] != NULL) {
             List* list = hashTable->buckets[i]->entries;
             Position position = first(list);
             while (!isLast(list, position)) {
@@ -186,7 +199,7 @@ int getAvarageLengthOfListsOfBuckets(HashTable* hashTable) {
 int getMaxLengthOfList(HashTable* hashTable) {
     int max = 0;
     for (int i = 0; i < hashTable->size; i++) {
-        if (!(hashTable->buckets[i] == NULL)) {
+        if (hashTable->buckets[i] != NULL) {
             List* list = hashTable->buckets[i]->entries;
             if (getLength(list) > max) {
                 max = getLength(list);
