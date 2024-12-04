@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{9bd08096-e525-411c-bfc1-e769a6f36921}</ProjectGuid>
-    <RootNamespace>My1Task</RootNamespace>
+    <ProjectGuid>{6911eba7-b6d1-46b0-81c9-6ad916487e62}</ProjectGuid>
+    <RootNamespace>task</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -129,9 +129,13 @@
   <ItemGroup>
     <ClCompile Include="binTree.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="sort.c" />
+    <ClCompile Include="tests.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="binTree.h" />
+    <ClInclude Include="sort.h" />
+    <ClInclude Include="tests.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
