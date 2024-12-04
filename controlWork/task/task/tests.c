@@ -2,7 +2,7 @@
 #include "sort.h"
 #include <stdlib.h>
 
-bool testForSortForNormalValue() {
+bool testForSortByTreeForNormalValue() {
     BinTree* binTree = NULL;
     insert(&binTree, 6);
     insert(&binTree, 3);
@@ -21,7 +21,7 @@ bool testForSortForNormalValue() {
     return true;
 }
 
-bool testForSortForEqualValue() {
+bool testForSortByTreeForEqualValue() {
     BinTree* binTree = NULL;
     insert(&binTree, 6);
     insert(&binTree, 6);
@@ -40,7 +40,7 @@ bool testForSortForEqualValue() {
     return true;
 }
 
-bool testForSortForDoublicateslValue() {
+bool testForSortByTreeForDoublicateslValue() {
     BinTree* binTree = NULL;
     insert(&binTree, 6);
     insert(&binTree, 2);
@@ -83,9 +83,9 @@ bool testForSortForDoublicates() {
 
 bool isCompletedTests() {
     bool* tests[5] = {
-        testForSortForNormalValue(),
-        testForSortForEqualValue(),
-        testForSortForDoublicateslValue(),
+        testForSortByTreeForNormalValue(),
+        testForSortByTreeForEqualValue(),
+        testForSortByTreeForDoublicateslValue(),
         testForSortForEqual(),
         testForSortForDoublicates(),
     };
