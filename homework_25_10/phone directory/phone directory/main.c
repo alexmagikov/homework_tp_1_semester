@@ -28,11 +28,11 @@ Base createBase(char* fileName) {
         base.indexOfLastElement = 0;
         return base;
     }
-    char buffer[31];
+    char name[20] = "\0";
+    char phone[12] = "\0";
     int indexOfNote = 0;
-    Note* arrayOfNotes = NULL;
-    while (fgets(buffer, sizeof(buffer), file) != NULL) {
-        arrayOfNotes = (Note*)realloc(arrayOfNotes, (indexOfNote + 1) * sizeof(Note));
+    Note* arrayOfNotes = (Note*)malloc(100*sizeof(Note));
+    while (fscanf(file, "%20s %12s", name, phone) != EOF) {
         if (arrayOfNotes == NULL) {
             fclose(file);
             returnErrorOfMemory(arrayOfNotes);
@@ -47,27 +47,12 @@ Base createBase(char* fileName) {
             fclose(file);
             returnErrorOfMemory(arrayOfNotes[indexOfNote].phone);
         }
-
-        char name[20];
-        char phone[12];
-        int indexBuffer = 0;
-        while (buffer[indexBuffer] != ' ') {
-            name[indexBuffer] = buffer[indexBuffer];
-            indexBuffer++;
-        }
-        name[indexBuffer] = '\0';
-        indexBuffer++;
-        int indexName = indexBuffer;
-        while (buffer[indexBuffer] != '\n' && buffer[indexBuffer] != '\0') {
-            phone[indexBuffer - indexName] = buffer[indexBuffer];
-            indexBuffer++;
-        }
-        phone[indexBuffer - indexName] = '\0';
         strcpy(arrayOfNotes[indexOfNote].name, name);
         strcpy(arrayOfNotes[indexOfNote].phone, phone);
         indexOfNote++;
 
     }
+
     fclose(file);
     Base result;
     result.notes = arrayOfNotes;
@@ -85,53 +70,25 @@ bool testForCreateBaseForBorderValue() {
     return base.indexOfLastElement == 0;
 }
 
-void entryToBase(Base* base, int* indexOfNote) {
-    char* name[20];
-    char* phone[12];
-    printf("input name ");
-    scanf("%20s", name);
-    printf("input phone ");
-    scanf("%11s", phone);
+void entryToBase(Base* base, int* indexOfNote, char* name, char* phone) {
     if (*indexOfNote + 1 > 100) {
         printf("base if full");
         exit(0);
     }
-    (*base).notes = (Note*)realloc((*base).notes, (*indexOfNote + 1) * sizeof(Note));
-    if ((*base).notes == NULL) {
-        returnErrorOfMemory((*base).notes);
+    base->notes = (Note*)realloc(base->notes, (*indexOfNote + 1) * sizeof(Note));
+    if (base->notes == NULL) {
+        returnErrorOfMemory(base->notes);
     }
-    (*base).notes[*indexOfNote].name = malloc(21);
-    (*base).notes[*indexOfNote].phone = malloc(12);
-    if ((*base).notes[*indexOfNote].name == NULL) {
-        returnErrorOfMemory((*base).notes[*indexOfNote].name);
+    base->notes[*indexOfNote].name = malloc(21);
+    base->notes[*indexOfNote].phone = malloc(12);
+    if (base->notes[*indexOfNote].name == NULL) {
+        returnErrorOfMemory(base->notes[*indexOfNote].name);
     }
-    if ((*base).notes[*indexOfNote].phone == NULL) {
-        returnErrorOfMemory((*base).notes[*indexOfNote].phone);
+    if (base->notes[*indexOfNote].phone == NULL) {
+        returnErrorOfMemory(base->notes[*indexOfNote].phone);
     }
-    strcpy((*base).notes[*indexOfNote].name, name);
-    strcpy((*base).notes[*indexOfNote].phone, phone);
-    (*indexOfNote)++;
-}
-
-void entryToBaseForTests(Base* base, int* indexOfNote, char* name, char* phone) {
-    if (*indexOfNote + 1 > 100) {
-        printf("base if full");
-        exit(0);
-    }
-    (*base).notes = (Note*)realloc((*base).notes, (*indexOfNote + 1) * sizeof(Note));
-    if ((*base).notes == NULL) {
-        returnErrorOfMemory((*base).notes);
-    }
-    (*base).notes[*indexOfNote].name = malloc(21);
-    (*base).notes[*indexOfNote].phone = malloc(12);
-    if ((*base).notes[*indexOfNote].name == NULL) {
-        returnErrorOfMemory((*base).notes[*indexOfNote].name);
-    }
-    if ((*base).notes[*indexOfNote].phone == NULL) {
-        returnErrorOfMemory((*base).notes[*indexOfNote].phone);
-    }
-    strcpy((*base).notes[*indexOfNote].name, name);
-    strcpy((*base).notes[*indexOfNote].phone, phone);
+    strcpy(base->notes[*indexOfNote].name, name);
+    strcpy(base->notes[*indexOfNote].phone, phone);
     (*indexOfNote)++;
 }
 
@@ -139,7 +96,7 @@ bool testForEntryToBaseForNormalValue() {
     Base base;
     base.notes = NULL;
     int index = 0;
-    entryToBaseForTests(&base, &index, "mark", "123");
+    entryToBase(&base, &index, "mark", "123");
     return !strcmp(base.notes[0].name, "mark") && !strcmp(base.notes[0].phone, "123");
 }
 
@@ -219,22 +176,22 @@ bool testForReturnNameByNumber() {
 
 void printToFile(Base* base, int index) {
     FILE* file = fopen("base.txt", "a");
-    for (int i = 0; i < (index - (*base).indexOfLastElement); i++) {
-        if ((*base).indexOfLastElement + i > 100) {
+    for (int i = 0; i < (index - base->indexOfLastElement); i++) {
+        if (base->indexOfLastElement + i > 100) {
             printf("base is full");
             break;
         }
         else {
-            if  ((*base).indexOfLastElement > 0 && i > 0) {
+            if  (base->indexOfLastElement > 0 && i > 0) {
                 fprintf(file, "\n");
             }
-            fprintf(file, (*base).notes[(*base).indexOfLastElement + i].name);
+            fprintf(file, base->notes[base->indexOfLastElement + i].name);
             fprintf(file, " ");
-            fprintf(file, (*base).notes[(*base).indexOfLastElement + i].phone);
+            fprintf(file, base->notes[base->indexOfLastElement + i].phone);
             fprintf(file, "\n");
         }
     }
-    (*base).indexOfLastElement = index;
+    base->indexOfLastElement = index;
     fclose(file);
 }
 
@@ -267,7 +224,13 @@ void main(void) {
             exit(0);
         }
         else if (currentDo == 1) {
-            entryToBase(&base, &index);
+            char* name[20];
+            char* phone[12];
+            printf("input name ");
+            scanf("%20s", name);
+            printf("input phone ");
+            scanf("%11s", phone);
+            entryToBase(&base, &index, name, phone);
         }
         else if (currentDo == 2) {
             printfBase(base, index);
