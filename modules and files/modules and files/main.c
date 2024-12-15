@@ -25,37 +25,44 @@ int searchMostFreaqmentElement(int array[], int numOfElements) {
     return mostFreaqment;
 }
 
-typedef struct {
+typedef struct Array {
     int* array;
     int numOfElements;
 } Array;
 
-Array createArray() {
+Array createArrayByDataFile() {
     Array result;
     FILE* file = fopen("data.txt", "r");
-    int* array = NULL;
-    char buffer[10];
-    int index = 0;
+    if (file == NULL) {
+        result.array = NULL;
+        result.numOfElements = 0;
+        return result;
+    }
+    result.array = (int*)malloc(13 * sizeof(int));
+    if (result.array == NULL) {
+        fclose(file);
+        result.numOfElements = 0;
+        return result;
+    }
 
-    while (fgets(buffer, sizeof(buffer), file) != NULL) {
-        array = (int*)realloc(array, (index + 1) * sizeof(int));
-        array[index] = atoi(buffer);
+    int index = 0;
+    while (index < 13 && fscanf(file, "%d", &result.array[index]) == 1) {
         index++;
     }
 
     fclose(file);
-    result.array = array;
     result.numOfElements = index;
     return result;
 }
 
 void main(void) {
-    Array array = createArray();
+    Array array = createArrayByDataFile();
     printf("array int txt ");
     for (int i = 0; i < array.numOfElements; i++) {
         printf("%d ", array.array[i]);
     }
     qSort(array.array, 0, array.numOfElements - 1);
     printf("\nMost freaqment element is %d ", searchMostFreaqmentElement(array.array, array.numOfElements));
+    free(array.array);
 }
 
