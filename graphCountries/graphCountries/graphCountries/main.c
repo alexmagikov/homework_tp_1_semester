@@ -7,17 +7,22 @@
 int main() {
 
     FILE* file = fopen("file.txt", "r");
+    if (file == NULL) {
+        printf("open fail");
+        return -1;
+    }
     int numCities = 0;
     fscanf(file, "%d", &numCities);
     int numRoads = 0;
     fscanf(file, "%d", &numRoads);
+
     int** matrix = malloc(numCities * sizeof(int));
     if (matrix == NULL) {
         printf("mem fail");
         return -1;
     }
     for (int i = 0; i < numCities; i++) {
-        matrix[i] = malloc(numCities * sizeof(int));
+        matrix[i] = calloc(numCities, sizeof(int*));
         if (matrix[i] == NULL) {
             printf("mem fail");
             return -1;
@@ -35,26 +40,33 @@ int main() {
 
     int numCapitals = 0;
     fscanf(file, "%d", &numCapitals);
-
     Graph* countries = createGraph(numCities);
-    bool* distribute = calloc(numCities, sizeof(bool));
+    bool* distributeScale = calloc(numCities, sizeof(bool));
 
-    countries = addCapital(countries, 2);
-    int m = 0;
-    /*
+    int* capitals = malloc(numCapitals * sizeof(int));
+
     for (int i = 0; i < numCapitals; i++) {
         int capital = -1;
         fscanf(file, "%d", &capital);
-        countries = addCapital(countries, capital);
-    }*/
+        countries = addNote(countries, capital, numCities, matrix, &distributeScale);
+        capitals[i] = capital;
+    }
 
-    debugPrintGraph(countries);
+    int index = 0;
+    while (!allDistribute(numCities, distributeScale)) {
+        addNote(countries, capitals[index], numCities, matrix, &distributeScale);
+        index++;
+        if (index >= numCapitals) {
+            index = 0;
+        }
+    }
+
+    printGraph(countries);
 
     fclose(file);
-
-    free(distribute);
-
-    // TODO: Add function to free graph memory
-    free(countries);
+    for (int i = 0; i < numCities; i++) {
+        free(matrix[i]);
+    }
+    removeGraph(countries);
     return 0;
 }

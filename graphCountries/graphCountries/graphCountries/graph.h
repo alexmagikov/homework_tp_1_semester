@@ -2,26 +2,25 @@
 #include <stdbool.h>
 #include "list.h"
 
-typedef struct Country Country;
-
 typedef struct Graph {
-    Country** countries;
+    List** countries;
     int numCities;
 } Graph;
 
-// add capital to country note 
-Graph* addCapital(Graph* graph, int capital);
+// add nearest note to country note 
+Graph* addNote(Graph* graph, int country, int numCities, int** matrix, bool** distributeScale);
 
 // initialize graph
 Graph* createGraph(int numCities);
 
-// add nearest unoccupied city 
-Graph* addNote(Graph* graph, int country, int** matrix, bool* distribute);
+// return true if all cities are distributed
+bool allDistribute(int numCities, bool* distributeScale);
 
 // print each capital and her cities 
 void printGraph(Graph* graph);
 
-void debugPrintGraph(Graph* graph);
+// free graph 
+void removeGraph(Graph* graph);
 
 
 
