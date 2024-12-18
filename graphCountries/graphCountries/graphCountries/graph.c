@@ -1,7 +1,14 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "graph.h"
 #include "list.h"
 #include <stdlib.h>
 #include <stdio.h>
+
+typedef struct Graph {
+    List** countries;
+    int numCities;
+} Graph;
 
 Graph* createGraph(int numCities) {
     Graph* graph = malloc(sizeof(Graph));
@@ -9,12 +16,12 @@ Graph* createGraph(int numCities) {
         return NULL;
     }
     graph->numCities = numCities;
-    graph->countries = malloc(numCities *sizeof(List*));
-    for (int i = 0; i < numCities; i++) {
-        graph->countries[i] = NULL;
-    }
+    graph->countries = malloc(numCities * sizeof(List*));
     if (graph->countries == NULL) {
         return NULL;
+    }
+    for (int i = 0; i < numCities; i++) {
+        graph->countries[i] = NULL;
     }
     return graph;
 }
@@ -30,9 +37,8 @@ Graph* addNote(Graph* graph, int country, int numCities, int** matrix, bool** di
         (*distributeScale)[country] = true;
         return graph;
     }
-
+    
     Position position = first(graph->countries[country]);
-
     for (int i = 0; i < getLength(graph->countries[country]); i++) {
         position = next(position);
         int cityOfCountry = getValue(graph->countries[country], position);
@@ -69,6 +75,14 @@ void printGraph(Graph* graph) {
     }
 }
 
+List** getGraphCountries(Graph* graph) {
+    return graph->countries;
+}
+
+int getGraphNumCities(Graph* graph) {
+    return graph->numCities;
+}
+
 bool allDistribute(int numCities, bool* distributeScale) {
     for (int i = 0; i < numCities; i++) {
         if (!distributeScale[i]) {
@@ -84,4 +98,70 @@ void removeGraph(Graph* graph) {
             freeListElements(graph->countries[i]);
         }
     }
+}
+
+Graph* distributeForCountries(char* fileName) {
+    FILE* file = fopen(fileName, "r");
+    if (file == NULL) {
+        printf("open fail");
+        return;
+    }
+    int numCities = 0;
+    fscanf(file, "%d", &numCities);
+    int numRoads = 0;
+    fscanf(file, "%d", &numRoads);
+
+    int** matrix = malloc(numCities * sizeof(int));
+    if (matrix == NULL) {
+        printf("mem fail");
+        return;
+    }
+    for (int i = 0; i < numCities; i++) {
+        matrix[i] = calloc(numCities, sizeof(int*));
+        if (matrix[i] == NULL) {
+            printf("mem fail");
+            return;
+        }
+    }
+
+    for (int i = 0; i < numRoads; i++) {
+        int from = 0;
+        int to = 0;
+        int length = 0;
+        fscanf(file, "%d %d %d", &from, &to, &length);
+        matrix[from][to] = length;
+        matrix[to][from] = length;
+    }
+
+    int numCapitals = 0;
+    fscanf(file, "%d", &numCapitals);
+    Graph* countries = createGraph(numCities);
+    bool* distributeScale = calloc(numCities, sizeof(bool));
+
+    int* capitals = malloc(numCapitals * sizeof(int));
+
+    for (int i = 0; i < numCapitals; i++) {
+        int capital = -1;
+        fscanf(file, "%d", &capital);
+        countries = addNote(countries, capital, numCities, matrix, &distributeScale);
+        capitals[i] = capital;
+    }
+
+    int index = 0;
+
+    while (!allDistribute(numCities, distributeScale)) {
+        addNote(countries, capitals[index], numCities, matrix, &distributeScale);
+        index++;
+        if (index >= numCapitals) {
+            index = 0;
+        }
+    }
+
+    fclose(file);
+    for (int i = 0; i < numCities; i++) {
+       free(matrix[i]);
+    }
+    removeGraph(countries);
+
+    return countries;
 }
