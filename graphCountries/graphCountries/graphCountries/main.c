@@ -60,7 +60,7 @@ int main() {
             index = 0;
         }
     }
-
+    
     printGraph(countries);
 
     fclose(file);
