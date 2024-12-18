@@ -6,8 +6,8 @@
 #include <string.h>
 
 typedef struct Note {
-    char* name;
-    char* phone;
+    char name[21];
+    char phone[12];
 } Note;
 
 typedef struct Base {
@@ -32,20 +32,14 @@ Base createBase(char* fileName) {
     char phone[12] = "\0";
     int indexOfNote = 0;
     Note* arrayOfNotes = (Note*)malloc(100*sizeof(Note));
+    if (arrayOfNotes == NULL) {
+        returnErrorOfMemory(arrayOfNotes);
+    }
+
     while (fscanf(file, "%20s %12s", name, phone) != EOF) {
         if (arrayOfNotes == NULL) {
             fclose(file);
             returnErrorOfMemory(arrayOfNotes);
-        }
-        arrayOfNotes[indexOfNote].name = malloc(20);
-        arrayOfNotes[indexOfNote].phone = malloc(12);
-        if (arrayOfNotes[indexOfNote].name == NULL) {
-            fclose(file);
-            returnErrorOfMemory(arrayOfNotes[indexOfNote].name);
-        }
-        if (arrayOfNotes[indexOfNote].phone == NULL) {
-            fclose(file);
-            returnErrorOfMemory(arrayOfNotes[indexOfNote].phone);
         }
         strcpy(arrayOfNotes[indexOfNote].name, name);
         strcpy(arrayOfNotes[indexOfNote].phone, phone);
@@ -79,14 +73,6 @@ void entryToBase(Base* base, int* indexOfNote, char* name, char* phone) {
     if (base->notes == NULL) {
         returnErrorOfMemory(base->notes);
     }
-    base->notes[*indexOfNote].name = malloc(21);
-    base->notes[*indexOfNote].phone = malloc(12);
-    if (base->notes[*indexOfNote].name == NULL) {
-        returnErrorOfMemory(base->notes[*indexOfNote].name);
-    }
-    if (base->notes[*indexOfNote].phone == NULL) {
-        returnErrorOfMemory(base->notes[*indexOfNote].phone);
-    }
     strcpy(base->notes[*indexOfNote].name, name);
     strcpy(base->notes[*indexOfNote].phone, phone);
     (*indexOfNote)++;
@@ -100,26 +86,9 @@ bool testForEntryToBaseForNormalValue() {
     return !strcmp(base.notes[0].name, "mark") && !strcmp(base.notes[0].phone, "123");
 }
 
-void returnNumberByName(Base base, int index) {
+char* returnNumberByName(Base base, int index, char* name) {
     bool isFind = false;
-    char name[20];
-    printf("input name ");
-    scanf("%s", name);
-    for (int i = 0; i < index; i++) {
-        if (!strcmp(name, base.notes[i].name)) {
-            printf("number: %s\n", base.notes[i].phone);
-            isFind = true;
-            break;
-        }
 
-    }
-    if (!isFind) {
-        printf("number didnt find\n");
-    }
-}
-
-char* returnNumberByNameForTests(Base base, int index, char name[20]) {
-    bool isFind = false;
     for (int i = 0; i < index; i++) {
         if (!strcmp(name, base.notes[i].name)) {
             return base.notes[i].phone;
@@ -133,29 +102,13 @@ char* returnNumberByNameForTests(Base base, int index, char name[20]) {
     }
 }
 
+
 bool testForReturnNumberByName() {
     Base base = createBase("baseForTestForNormalValue.txt");
-    return !strcmp(returnNumberByNameForTests(base, 1, "mark"), "123");
+    return !strcmp(returnNumberByName(base, 1, "mark"), "123");
 }
 
-void returnNameByNumber(Base base, int index) {
-    char number[12];
-    printf("input number ");
-    scanf("%s", number);
-    bool isFind = false;
-    for (int i = 0; i < index; i++) {
-        if (!strcmp(number, base.notes[i].phone)) {
-            printf("name: %s\n", base.notes[i].name);
-            isFind = true;
-            break;
-        }
-    }
-    if (!isFind) {
-        printf("number didnt find\n");
-    }
-}
-
-char* returnNameByNumberForTests(Base base, int index, char number[12]) {
+char* returnNameByNumber(Base base, int index, char* number) {
     bool isFind = false;
     for (int i = 0; i < index; i++) {
         if (!strcmp(number, base.notes[i].phone)) {
@@ -169,9 +122,10 @@ char* returnNameByNumberForTests(Base base, int index, char number[12]) {
     }
 }
 
+
 bool testForReturnNameByNumber() {
     Base base = createBase("baseForTestForNormalValue.txt");
-    return !strcmp(returnNameByNumberForTests(base, 1, "123"), "mark");
+    return !strcmp(returnNameByNumber(base, 1, "123"), "mark");
 }
 
 void printToFile(Base* base, int index) {
@@ -195,7 +149,7 @@ void printToFile(Base* base, int index) {
     fclose(file);
 }
 
-void printfBase(Base base, int index) {
+void printBase(Base base, int index) {
     for (int i = 0; i < index; i++) {
         printf("%s %s\n", base.notes[i].name, base.notes[i].phone);
     }
@@ -233,13 +187,19 @@ void main(void) {
             entryToBase(&base, &index, name, phone);
         }
         else if (currentDo == 2) {
-            printfBase(base, index);
+            printBase(base, index);
         }
         else if (currentDo == 3) {
-            returnNumberByName(base, index);
+            char name[21] = "\0";
+            printf("input name ");
+            scanf("%s", name);
+            printf("number: %s\n", returnNumberByName(base, index, name));
         }
         else if (currentDo == 4) {
-            returnNameByNumber(base, index);
+            char number[12] = "\0";
+            printf("input number ");
+            scanf("%s", number);
+            printf("name: %s\n", returnNameByNumber(base, index, number));
         }
         else if (currentDo == 5) {
             printToFile(&base, index);
