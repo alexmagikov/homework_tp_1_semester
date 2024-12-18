@@ -16,13 +16,13 @@ int main() {
     int numRoads = 0;
     fscanf(file, "%d", &numRoads);
 
-    int** matrix = malloc(numCities * sizeof(int));
+    int** matrix = malloc(numCities * sizeof(int*));
     if (matrix == NULL) {
         printf("mem fail");
         return -1;
     }
     for (int i = 0; i < numCities; i++) {
-        matrix[i] = calloc(numCities, sizeof(int*));
+        matrix[i] = calloc(numCities, sizeof(int));
         if (matrix[i] == NULL) {
             printf("mem fail");
             return -1;
@@ -68,5 +68,6 @@ int main() {
         free(matrix[i]);
     }
     removeGraph(countries);
+    free(matrix);
     return 0;
 }
