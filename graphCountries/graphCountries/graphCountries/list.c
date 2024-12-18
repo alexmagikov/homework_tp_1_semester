@@ -36,7 +36,7 @@ void add(List* list, Position position, int value) {
 
 int getValue(List* list, Position position) {
 	if (position == NULL) {
-		return NULL;
+		return -1;
 	}
 	return position->value;
 }

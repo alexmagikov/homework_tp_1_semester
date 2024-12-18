@@ -98,29 +98,31 @@ void removeGraph(Graph* graph) {
             freeListElements(graph->countries[i]);
         }
     }
+    free(graph->countries);
+    free(graph);
 }
 
 Graph* distributeForCountries(char* fileName) {
     FILE* file = fopen(fileName, "r");
     if (file == NULL) {
         printf("open fail");
-        return;
+        return NULL;
     }
     int numCities = 0;
     fscanf(file, "%d", &numCities);
     int numRoads = 0;
     fscanf(file, "%d", &numRoads);
 
-    int** matrix = malloc(numCities * sizeof(int));
+    int** matrix = malloc(numCities * sizeof(int*));
     if (matrix == NULL) {
         printf("mem fail");
-        return;
+        return NULL;
     }
     for (int i = 0; i < numCities; i++) {
-        matrix[i] = calloc(numCities, sizeof(int*));
+        matrix[i] = calloc(numCities, sizeof(int));
         if (matrix[i] == NULL) {
             printf("mem fail");
-            return;
+            return NULL;
         }
     }
 
@@ -156,12 +158,10 @@ Graph* distributeForCountries(char* fileName) {
             index = 0;
         }
     }
-
     fclose(file);
     for (int i = 0; i < numCities; i++) {
        free(matrix[i]);
     }
-    removeGraph(countries);
-
+    free(matrix);
     return countries;
 }
