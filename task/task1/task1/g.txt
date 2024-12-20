@@ -1,16 +1,16 @@
-nums less then 10:
-6
-1
-4
+nums less then 0:
 -1
 -31
 -100
-0
+nums in interval from 0 to 100:
+6
+1
 4
-nums in interval from 10 to 20:
 10
 12
-nums more then 20:
 67
-324
 45
+0
+4
+nums more then 100:
+324
