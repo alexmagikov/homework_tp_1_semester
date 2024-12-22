@@ -9,102 +9,173 @@
 #include <ctype.h>
 
 bool testForCreateStack() {
-	Stack* stack = createStack();
-	return stack != NULL;
+    Stack* stack = createStack();
+    bool result = stack != NULL;
+    int errorCode = 0;
+    clearStack(&stack, &errorCode);
+    if (errorCode == -1) {
+        return false;
+    }
+    return result;
 }
 
 bool testForPeek() {
-	Stack* stack = createStack();
-	push(stack, 1);
-	return peek(stack) == 1;
+    Stack* stack = createStack();
+    int errorCode = 0;
+    push(stack, 1, &errorCode);
+    if (errorCode == -1) {
+        return false;
+    }
+    int result = peek(stack, &errorCode);
+    clearStack(&stack, &errorCode);
+    if (errorCode == -1) {
+        return false;
+    }
+    return result == 1;
 }
 
 bool testForPop() {
-	Stack* stack = createStack();
-	push(stack, 1);
-	push(stack, 2);
-	pop(stack);
-	return peek(stack) == 1;
+    Stack* stack = createStack();
+    int errorCode = 0;
+    push(stack, 1, &errorCode);
+    if (errorCode == -1) {
+        return false;
+    }
+    push(stack, 2, &errorCode);
+    if (errorCode == -1) {
+        return false;
+    }
+    pop(stack, &errorCode);
+    if (errorCode == -1) {
+        return false;
+    }
+    int result = peek(stack, &errorCode) == 1;
+    if (errorCode == -1) {
+        return false;
+    }
+    clearStack(&stack, &errorCode);
+    if (errorCode == -1) {
+        return false;
+    }
+    return result;
 }
 
 bool testForIsEmpty() {
-	Stack* stack = createStack();
-	return isEmpty(stack);
+    Stack* stack = createStack();
+    bool result = isEmpty(stack);
+    int errorCode = 0;
+    clearStack(&stack, &errorCode);
+    if (errorCode == -1) {
+        return false;
+    }
+    return result;
 }
 
-int calculateInPostfix(const char* string) {
-	Stack* stack = createStack();
-	for (int i = 0; i < strlen(string); i++) {
-		if (isdigit(string[i])) {
-			push(stack, string[i] - '0');
-		}
-		else {
-			if (!isEmpty(stack)) {
-				int tmp = peek(stack);
-				pop(stack);
-				if (string[i] == '-') {
-					tmp = peek(stack) - tmp;
-				}
-				else if (string[i] == '+') {
-					tmp = peek(stack) + tmp;
-				}
-				else if (string[i] == '/') {
-					if (tmp == 0) {
-						printf("u cant divide by 0 ");
-						clearStack(stack);
-						free(stack);
-						exit(0);
-						return -1;
-					}
-					tmp = peek(stack) / tmp;
-				}
-				else if (string[i] == '*') {
-					tmp = peek(stack) * tmp;
-				}
-				pop(stack);
-				push(stack, tmp);
-			}
-		}
-	}
-	if (isEmpty(stack)) {
-		return -1;
-	}
-	else {
-		int result = peek(stack);
-		clearStack(stack);
-		free(stack);
-		return result;
-	}
+int calculateInPostfix(const char* string, int* errorCode) {
+    Stack* stack = createStack();
+    for (int i = 0; string[i] != '\0'; i++) {
+        if (isdigit(string[i])) {
+            push(stack, string[i] - '0', errorCode);
+        }
+        else if (!isEmpty(stack)) {
+            int tmp = peek(stack, errorCode);
+            pop(stack, errorCode);
+            if (string[i] == '-') {
+                tmp = peek(stack, errorCode) - tmp;
+            }
+            else if (string[i] == '+') {
+                tmp = peek(stack, errorCode) + tmp;
+            }
+            else if (string[i] == '/') {
+                if (tmp == 0) {
+                    printf("u cant divide by 0 ");
+                    clearStack(stack, errorCode);
+                    free(stack);
+                    return -1;
+                }
+                tmp = peek(stack, errorCode) / tmp;
+            }
+            else if (string[i] == '*') {
+                tmp = peek(stack, errorCode) * tmp;
+            }
+
+            pop(stack, errorCode);
+            push(stack, tmp, errorCode);
+        }
+    }
+    if (isEmpty(stack)) {
+        return -1;
+    }
+    else {
+        int result = peek(stack, errorCode);
+        clearStack(&stack, errorCode);
+        return result;
+    }
  }
 
 bool testForPostfixCalculatorForNormalValue() {
-	return calculateInPostfix("96-12+*") == 9;
+    int errorCode = 0;
+    int result = calculateInPostfix("96-12+*", &errorCode);
+    if (errorCode == -1) {
+        return false;
+    }
+    return result;
 }
 
 bool testForPostfixCalculatorForBorderValue() {
-	return calculateInPostfix("1") == 1;
+    int errorCode = 0;
+    int result = calculateInPostfix("1", &errorCode);
+    if (errorCode == -1) {
+        return false;
+    }
+    return result;
 }
 
 bool testForPostfixCalculatorForNULLValue() {
-	return calculateInPostfix(" ") == -1;
+    int errorCode = 0;
+    int result = calculateInPostfix(" ", &errorCode);
+    if (errorCode == -1) {
+        return false;
+    }
+    return result;
 }
 
 bool testForClearStack() {
-	Stack* stack = createStack();
-	push(stack, 1);
-	push(stack, 2);
-	clearStack(stack);
-	return isEmpty(stack);
+    Stack* stack = createStack();
+    int errorCode = 0;
+    push(stack, 1, &errorCode);
+    if (errorCode == -1) {
+        return false;
+    }
+    push(stack, 2, &errorCode);
+    if (errorCode == -1) {
+        return false;
+    }
+    clearStack(&stack, errorCode);
+    if (errorCode == -1) {
+        return -1;
+    }
+    return stack == NULL;
 }
 
-void main(void) {
-	if (!testForClearStack() || !testForPostfixCalculatorForNULLValue() || !testForPostfixCalculatorForBorderValue() || !testForPostfixCalculatorForNormalValue() || !testForIsEmpty() || !testForPeek || !testForCreateStack() || !testForPop()) {
-		printf("tests are failed");
-		exit(0);
-	}
-	Stack* stack = createStack();
-	const char* string[100];
-	printf("input postfix expression ");
-	scanf("%s", &string);
-	printf("result %d", calculateInPostfix(string));
+int main(void) {
+    if (!testForClearStack() || !testForPostfixCalculatorForNULLValue() || !testForPostfixCalculatorForBorderValue() || !testForPostfixCalculatorForNormalValue() || !testForIsEmpty() || !testForPeek || !testForCreateStack() || !testForPop()) {
+        printf("tests are failed");
+        exit(0);
+    }
+    Stack* stack = createStack();
+    const char string[100];
+    printf("input postfix expression ");
+    scanf("%s", &string);
+    int errorCode = 0;
+    int result = calculateInPostfix(&string, &errorCode);
+    if (errorCode == -1) {
+        return -1;
+    }
+    printf("result %d", result);
+    clearStack(&stack, &errorCode);
+    if (errorCode == -1) {
+        return -1;
+    }
+    return 0;
 }

@@ -12,28 +12,35 @@ typedef struct Stack {
 	StackElement* head;
 } Stack;
 
-void push(Stack* stack, int value) {
+void push(Stack* stack, int value, int* errorCode) {
 	if (stack == NULL) {
-		printf("not initialized");
+		*errorCode = -1;
+		return;
 	}
 	StackElement* element = malloc(sizeof(StackElement));
+	if (element == NULL) {
+		*errorCode = -1;
+		return;
+	}
 	element->value = value;
 	element->next = stack->head;
 	stack->head = element;
 }
 
-void pop(Stack* stack) {
+void pop(Stack* stack, int* errorCode) {
 	if (stack == NULL || stack->head == NULL) {
-		return -1;
+		*errorCode = -1;
+		return;
 	}
 	Stack* tmp = stack->head;
 	stack->head = stack->head->next;
 	free(tmp);
 }
 
-int peek(Stack* stack) {
+int peek(Stack* stack, int* errorCode) {
 	if (stack == NULL || stack->head == NULL) {
-		return -1;
+		*errorCode = -1;
+		return;
 	}
 	return stack->head->value;
 }
@@ -46,8 +53,10 @@ Stack* createStack() {
 	return (Stack*)calloc(1, sizeof(Stack));
 }
 
-void clearStack(Stack* stack) {
-	while (!isEmpty(stack)) {
-		pop(stack);
+void clearStack(Stack** stack, int* errorCode) {
+	while (!isEmpty(*stack)) {
+		pop(*stack, errorCode);
 	}
+	free(*stack);
+	*stack = NULL;
 }

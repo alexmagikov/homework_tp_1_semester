@@ -4,14 +4,20 @@
 
 typedef struct Stack Stack;
 
-void push(Stack* stack, int value);
+// add element to stak 
+void push(Stack* stack, int value, int* errorCode);
 
-void pop(Stack* stack);
+// remove element from head of stak
+void pop(Stack* stack, int* errorCode);
 
-int peek(Stack* stack);
+// peek the element on head 
+int peek(Stack* stack, int* errorCode);
 
+// return true if stak is empty. else false 
 bool isEmpty(Stack* stack);
 
+// initialize stack 
 Stack* createStack();
 
-void clearStack(Stack* stack);
+// remove Stack
+void clearStack(Stack** stack, int* errorCode);
