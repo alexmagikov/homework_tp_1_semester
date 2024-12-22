@@ -98,7 +98,10 @@ int calculateInPostfix(const char* string, int* errorCode) {
             else if (string[i] == '*') {
                 tmp = peek(stack, errorCode) * tmp;
             }
-
+            else {
+                *errorCode = -1;
+                return;
+            }
             pop(stack, errorCode);
             push(stack, tmp, errorCode);
         }
