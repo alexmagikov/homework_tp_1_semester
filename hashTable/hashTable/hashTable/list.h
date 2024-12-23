@@ -3,8 +3,8 @@
 #include <stdbool.h>
 
 typedef struct Value {
-    char* entry;
-    int count;
+	char* entry;
+	int count;
 } Value;
 
 typedef struct List List;

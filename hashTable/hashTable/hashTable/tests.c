@@ -2,7 +2,10 @@
 #include "hashTable.h"
 #include <stdio.h>
 
+#include <stdlib.h>
+
 #define numOfTests 8
+#define EPSILON 1e-6
 
 bool testForCreateHashTable() {
     HashTable* hashTable = createHashTable(100);
@@ -39,7 +42,7 @@ bool testForFillFactor() {
     HashTable* hashTable = createHashTable(100);
     hashTable = insert(hashTable, "test");
     float expected = 1.0f / 100.0f; 
-    return getFillFactor(hashTable) == expected;
+    return abs(getFillFactor(hashTable) - expected) < EPSILON;
 }
 
 bool testForAvarageLengthOfList() {

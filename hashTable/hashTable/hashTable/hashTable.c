@@ -51,6 +51,10 @@ HashItem* createHashItem(int hashValue, char* value) {
     List* entries = createList();
     Position position = first(entries);
     Value hashItemValue = {.entry = malloc(sizeof(char) * (1 + strlen(value))),.count = 1};
+    if (hashItemValue.entry == NULL) {
+        free(hashItem);
+        return NULL;
+    }
     strcpy(hashItemValue.entry, value);
     add(entries, position, hashItemValue);
     hashItem->entries = entries;

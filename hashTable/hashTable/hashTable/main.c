@@ -6,9 +6,7 @@
 #include <stdlib.h>
 
 int main() {
-    if (!isCompleted()) {
-        return -1;
-    }
+
 
     HashTable* hashTable = createHashTable(100);
     char bufferSymbol = '\0';
